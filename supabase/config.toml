@@ -1,0 +1,31 @@
+# Configuration Supabase locale du Control Center.
+# Projet remote lie : pprsngmvrkxbzuvghgef (Refontiq Control Center, Frankfurt).
+project_id = "refontiq-control-center"
+
+[api]
+enabled = true
+port = 55331
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 55332
+major_version = 15
+
+[studio]
+enabled = true
+port = 55333
+
+[inbucket]
+enabled = true
+port = 55334
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://control-center.refontiq.com"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[storage]
+file_size_limit = "50MiB"

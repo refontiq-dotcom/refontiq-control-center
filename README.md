@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Refontiq Control Center
 
-## Getting Started
+Hub d'administration centralisé (Super Admin) pour piloter tous les produits Refontiq depuis un seul endroit.
 
-First, run the development server:
+## Produits gérés
+- **Séjoura** - Gestion de résidences/hôtels (en production)
+- **Schooly** - Gestion scolaire multi-établissements (en développement)
+- **Docly** - Gestion de cliniques (en reconstruction)
+- **Trouvetou** - Plateforme de découverte grand public (en production)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Fonctionnalités
+- ✅ Authentification Super Admin par **mot de passe seul** (pas d'email)
+- ✅ Dashboard consolidé avec métriques par produit (`portfolio_metrics`)
+- ✅ Endpoint `POST /api/metrics/push` pour que chaque SaaS pousse ses métriques (clé partagée `METRICS_PUSH_SECRET`)
+- ✅ Alertes **Telegram** gratuites/illimitées (via bot)
+- ✅ Liens directs vers les consoles d'administration de chaque produit
+- ✅ Mode sombre/clair + couleur de marque personnalisable
+- ✅ Row Level Security (RLS) stricte
+
+## Architecture
+```
+refontiq-control-center (repo neutre, propre)
+├── src/
+│   ├── app/
+│   │   ├── admin/              # Pages Super Admin (login + dashboard)
+│   │   ├── api/
+│   │   │   ├── admin-login/    # Auth par mot de passe seul
+│   │   │   └── metrics/push/   # Réception métriques produits
+│   ├── components/
+│   │   ├── ui/                 # Composants shadcn/ui style
+│   │   └── providers/          # Theme provider
+│   ├── lib/
+│   │   ├── supabase/           # Clients Supabase (client, server, admin)
+│   │   ├── telegram.ts         # Utilitaire alertes Telegram
+│   │   ├── projects.ts         # Config produits Refontiq
+│   │   └── routes.ts           # Routes constantes
+│   └── middleware.ts           # Protection routes /admin/*
+├── supabase/
+│   └── schema.sql              # Schéma DB (users, portfolio_metrics, RLS)
+└── scripts/
+    ├── db-push.mjs             # Déploiement schéma
+    └── create-super-admin.mjs  # Création compte Super Admin
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Démarrage rapide
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# 1. Installer les dépendances
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 2. Configurer l'environnement
+cp .env.example .env.local
+# Éditer .env.local avec vos clés Supabase, Telegram, etc.
 
-## Learn More
+# 3. Pousser le schéma DB
+npm run db:push
 
-To learn more about Next.js, take a look at the following resources:
+# 4. Créer le Super Admin
+npm run create-super-admin
+# Note le mot de passe affiché (ne sera plus montré)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 5. Lancer en développement
+npm run dev
+# → http://localhost:3000/admin
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Variables d'environnement requises
 
-## Deploy on Vercel
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé service role (admin) |
+| `SUPER_ADMIN_EMAIL` | Email du compte Super Admin |
+| `TELEGRAM_BOT_TOKEN` | Token bot Telegram (@BotFather) |
+| `TELEGRAM_CHAT_ID` | ID du chat/canal destinataire |
+| `TELEGRAM_ADMIN_URL` | URL publique vers /admin/dashboard |
+| `METRICS_PUSH_SECRET` | Clé partagée forte (ex: `openssl rand -hex 32`) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Intégration produits (ex: Schooly, Séjoura)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Chaque produit doit :
+1. Avoir la variable `METRICS_PUSH_SECRET` identique
+2. Appeler `POST https://control-center.refontiq.com/api/metrics/push` avec :
+```json
+{
+  "projet": "schooly",
+  "nom": "Schooly",
+  "mrr": 1500000,
+  "comptes_actifs": 42,
+  "statut_sante": "healthy"
+}
+```
+Header: `Authorization: Bearer <METRICS_PUSH_SECRET>`
+
+## Sécurité
+- Middleware protège toutes les routes `/admin/*`
+- Vérification rôle `super_admin` + `is_active` en base
+- Rate limiting sur `/api/admin-login` (6 tentatives / 10 min par IP)
+- RLS sur toutes les tables (lecture Super Admin uniquement)
+
+## Déploiement
+- Vercel recommandé (Next.js natif)
+- Configurer les variables d'env sur Vercel
+- Domaine suggéré : `control-center.refontiq.com`
