@@ -27,6 +27,7 @@ import {
   BedDouble,
   Stethoscope,
   GraduationCap,
+  Clock3,
 } from "lucide-react";
 import {
   ADMIN_LOGIN_ROUTE,
@@ -74,6 +75,30 @@ function ProjectIcon({ iconName, className }: { iconName: string; className?: st
   return <Icon className={className} />;
 }
 
+function formatRelativeSync(value?: string | null) {
+  if (!value) return "Jamais synchronisé";
+  const timestamp = new Date(value).getTime();
+  if (!Number.isFinite(timestamp)) return "Date invalide";
+
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+  if (diffSeconds < 60) return "à l'instant";
+  const minutes = Math.floor(diffSeconds / 60);
+  if (minutes < 60) return `il y a ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `il y a ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return `il y a ${days} j`;
+}
+
+function getSyncState(value?: string | null) {
+  if (!value) return { label: "Jamais synchronisé", className: "text-slate-500" };
+  const ageMinutes = (Date.now() - new Date(value).getTime()) / 60_000;
+  if (!Number.isFinite(ageMinutes)) return { label: "Date invalide", className: "text-slate-500" };
+  if (ageMinutes <= 10) return { label: "Synchro récente", className: "text-emerald-600" };
+  if (ageMinutes <= 30) return { label: "Synchro ancienne", className: "text-amber-600" };
+  return { label: "Synchro expirée", className: "text-red-600" };
+}
+
 function ProjectCardCompact({ project, metrics }: { project: RefontiqProject; metrics: PortfolioMetric[] }) {
   const projectMetrics = metrics.find((m) => m.projet === project.id);
   const healthColor = {
@@ -88,6 +113,7 @@ function ProjectCardCompact({ project, metrics }: { project: RefontiqProject; me
     critical: "Critique",
     unknown: "Inconnu",
   }[projectMetrics?.statut_sante ?? "unknown"];
+  const syncState = getSyncState(projectMetrics?.derniere_synchro);
 
   return (
     <Card className="p-4 flex items-start gap-3">
@@ -117,6 +143,10 @@ function ProjectCardCompact({ project, metrics }: { project: RefontiqProject; me
             <Wallet className="w-3 h-3" />
             {projectMetrics !== undefined ? formatFCFA(projectMetrics.mrr) : "—"}
           </span>
+        </div>
+        <div className={`flex items-center gap-1 text-[11px] mt-2 ${syncState.className}`}>
+          <Clock3 className="w-3 h-3" />
+          <span>{syncState.label} • {formatRelativeSync(projectMetrics?.derniere_synchro)}</span>
         </div>
       </div>
       <Badge className={healthColor}>{healthLabel}</Badge>
@@ -162,6 +192,7 @@ export default function SuperAdminHubPage() {
       ]);
       setMetrics(metricsData || []);
       if (metricsData && metricsData.length) setMetricsFetched(true);
+      setLastSyncAt(new Date().toISOString());
       setPendingPayments(
         ((paymentsData || []).map((p: any) => {
           const project = REFONTIQ_PROJECTS.find((pr) => pr.id === p.product_id);
@@ -170,9 +201,11 @@ export default function SuperAdminHubPage() {
       );
       setAlerts(alertsData || []);
     } catch {
+      setMetricsStatus("erreur");
       if (!silent) toast.error("Oups, les données n'ont pas pu se charger... Réessayez 🔄");
     } finally {
-      if (!silent) setMetricsStatus("synchronisation");
+      setLoading(false);
+      if (!silent) setMetricsStatus((current) => current === "erreur" ? "erreur" : "synchronisation");
     }
   }, []);
 
@@ -210,7 +243,7 @@ export default function SuperAdminHubPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "impossible");
       setLastSyncAt(new Date().toISOString());
-      toast.success("Ré 동기화 demandé (" + data.ref + ").");
+      toast.success("Resynchronisation demandée (" + data.ref + ").");
       await loadData(true);
     } catch {
       toast.error("Impossible de déclencher la ré 동기화.");
@@ -283,7 +316,9 @@ export default function SuperAdminHubPage() {
                 ? "Synchronisation…"
                 : metricsStatus === "erreur"
                   ? "Erreur de synchronisation"
-                  : "Données synchronisées"}
+                  : lastSyncAt
+                    ? `Dernière consultation : ${formatRelativeSync(lastSyncAt)}`
+                    : "En attente de synchronisation"}
             </div>
           </div>
 
@@ -349,6 +384,10 @@ export default function SuperAdminHubPage() {
               <ProjectCardCompact key={project.id} project={project} metrics={metrics} />
             ))}
           </div>
+          <p className="mt-3 text-[11px] text-slate-500">
+            Santé = état déclaré par le produit. La fraîcheur est calculée à partir de sa dernière synchronisation.
+            Une synchronisation de plus de 30 minutes est signalée comme expirée.
+          </p>
 
           {activeProjects.length > 0 && (
             <div className="mt-6 pt-4 border-t">
