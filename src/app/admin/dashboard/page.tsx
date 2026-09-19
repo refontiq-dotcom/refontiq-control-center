@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { formatFCFA } from "@/lib/utils";
 import {
   REFONTIQ_PROJECTS,
@@ -48,9 +47,9 @@ interface PortfolioMetric {
 
 interface PendingPayment {
   id: string;
-  product_id: string;
-  project_label?: string;
-  tenant_name?: string;
+  produit: string;
+  produit_ref: string | null;
+  plan: string;
   amount: number;
   status: string;
   created_at: string;
@@ -176,30 +175,23 @@ export default function SuperAdminHubPage() {
         return;
       }
       setMetricsStatus("chargement");
-      const supabaseAdmin = createAdminClient();
+      const res = await fetch("/api/admin/overview", { cache: "no-store" });
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = ADMIN_LOGIN_ROUTE;
+        return;
+      }
+      const overview = await res.json();
+      if (!res.ok) throw new Error(overview.error || "Lecture impossible");
 
-      const [{ data: metricsData }, { data: paymentsData }, { data: alertsData }] = await Promise.all([
-        supabaseAdmin.from("portfolio_metrics").select("*").order("nom"),
-        supabaseAdmin.from("subscription_payment_requests")
-          .select("id,product_id,tenant_id,amount,status,created_at")
-          .eq("status", "pending")
-          .order("created_at", { ascending: false })
-          .limit(25),
-        supabaseAdmin.from("telegram_alerts")
-          .select("id,type,message,created_at")
-          .order("created_at", { ascending: false })
-          .limit(10),
-      ]);
-      setMetrics(metricsData || []);
-      if (metricsData && metricsData.length) setMetricsFetched(true);
+      const metricsData = overview.metrics ?? [];
+      const paymentsData = overview.pendingPayments ?? [];
+      const alertsData = overview.alerts ?? [];
+
+      setMetrics(metricsData);
+      if (metricsData.length) setMetricsFetched(true);
       setLastSyncAt(new Date().toISOString());
-      setPendingPayments(
-        ((paymentsData || []).map((p: any) => {
-          const project = REFONTIQ_PROJECTS.find((pr) => pr.id === p.product_id);
-          return { ...p, project_label: project?.name, tenant_name: undefined };
-        })),
-      );
-      setAlerts(alertsData || []);
+      setPendingPayments(paymentsData);
+      setAlerts(alertsData);
     } catch {
       setMetricsStatus("erreur");
       if (!silent) toast.error("Oups, les données n'ont pas pu se charger... Réessayez 🔄");
