@@ -20,7 +20,7 @@ export async function GET() {
   const { data, error } = await admin
     .from("payment_validation_requests")
     .select("id,produit,produit_ref,plan,amount,status,requested_by,sender_phone,validated_by,validated_at,notes,created_at")
-    .eq("produit", "schooly")
+    .in("produit", ["schooly", "sejoura"])
     .order("created_at", { ascending: false })
     .limit(50);
 
@@ -39,13 +39,13 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    if (body?.produit !== "schooly" || !body?.produit_ref || !body?.plan) {
+    if (!["schooly", "sejoura"].includes(body?.produit) || !body?.produit_ref || !body?.plan) {
       return NextResponse.json({ error: "Demande de facturation invalide" }, { status: 400 });
     }
 
     const admin = createAdminClient();
     const { data, error } = await admin.from("payment_validation_requests").insert({
-      produit: "schooly",
+      produit: String(body.produit),
       produit_ref: String(body.produit_ref),
       plan: String(body.plan),
       amount: Number(body.amount) || 0,
