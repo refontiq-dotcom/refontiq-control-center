@@ -73,7 +73,7 @@ export default function AdminBillingPage() {
               <ArrowLeft className="h-3.5 w-3.5" /> Retour au Control Center
             </Link>
             <h1 className="mt-2 text-2xl font-bold text-slate-900">Facturation centralisée</h1>
-            <p className="text-sm text-slate-500">Schooly • demandes de paiement et validation Super Admin</p>
+            <p className="text-sm text-slate-500">Séjoura + Schooly • demandes de paiement et validation centralisée</p>
           </div>
           <button onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm">
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Actualiser
@@ -89,7 +89,7 @@ export default function AdminBillingPage() {
         </section>
 
         <section className="rounded-xl border bg-white">
-          <div className="border-b p-4"><h2 className="font-semibold text-slate-900">Demandes Schooly</h2></div>
+          <div className="border-b p-4"><h2 className="font-semibold text-slate-900">Demandes de paiement</h2></div>
           {loading ? (
             <div className="flex items-center gap-2 p-6 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Chargement…</div>
           ) : requests.length === 0 ? (
@@ -99,7 +99,7 @@ export default function AdminBillingPage() {
               {requests.map((r) => (
                 <div key={r.id} className="grid gap-3 p-4 md:grid-cols-[1fr_auto_auto] md:items-center">
                   <div>
-                    <div className="text-sm font-medium text-slate-900">Schooly • établissement {r.produit_ref || "—"}</div>
+                    <div className="text-sm font-medium text-slate-900">{r.produit} • référence {r.produit_ref || "—"}</div>
                     <div className="mt-1 text-xs text-slate-500">
                       {r.plan} • {new Date(r.created_at).toLocaleString("fr-FR")} • {r.sender_phone || "—"}
                     </div>
