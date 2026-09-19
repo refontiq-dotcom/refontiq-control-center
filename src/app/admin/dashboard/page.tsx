@@ -24,6 +24,7 @@ import {
   ExternalLink,
   GraduationCap,
   LayoutDashboard,
+  BedDouble,
   LogOut,
   RefreshCw,
   Search,
@@ -73,6 +74,7 @@ const PROJECT_ICON_MAP: Record<string, React.ComponentType<{ className?: string 
   GraduationCap,
   Stethoscope,
   LayoutDashboard,
+  BedDouble,
 };
 
 function ProjectIcon({ iconName, className }: { iconName: string; className?: string }) {
@@ -172,7 +174,6 @@ export default function SuperAdminHubPage() {
   const [lastSyncAt, setLastSyncAt] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [healthFilter, setHealthFilter] = useState<"all" | Health>("all");
-  const [telegramTested, setTelegramTested] = useState(false);
 
   const loadData = useCallback(async (silent = false) => {
     try {
@@ -250,30 +251,6 @@ export default function SuperAdminHubPage() {
     await loadData(true);
   }
 
-  async function handleTelegramTest() {
-    try {
-      const res = await fetch("/api/demo-alert", { method: "POST" });
-      if (!res.ok) throw new Error();
-      setTelegramTested(true);
-      toast.success("Alerte de test créée.");
-      await loadData(true);
-    } catch {
-      toast.error("Le test d'alerte a échoué.");
-    }
-  }
-
-  async function handleResync() {
-    try {
-      const res = await fetch("/api/resync-metrics", { method: "POST" });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.error || "Erreur");
-      toast.success("Resynchronisation demandée.");
-      await loadData(true);
-    } catch {
-      toast.error("Impossible de déclencher la resynchronisation.");
-    }
-  }
-
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -315,13 +292,13 @@ export default function SuperAdminHubPage() {
               <Link href="/admin/billing" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CreditCard className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">{pendingPayments.length}</div><div className="text-[10px] text-slate-400">Paiements</div></Link>
               <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CheckCircle2 className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Suivi</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
               <Link href="/admin/trouvetou-traffic" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><TrendingUp className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Trafic</div><div className="text-[10px] text-slate-400">Trouvetou</div></Link>
-              <button onClick={() => void handleResync()} className="rounded-xl border border-white/10 bg-white/5 p-3 text-left hover:bg-white/10"><Zap className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Sync</div><div className="text-[10px] text-slate-400">Tous produits</div></button>
+              <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><Zap className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">État</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
             </div>
           </div>
         </section>
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Building2 className="h-4 w-4" /> Produits suivis</div><div className="mt-2 text-2xl font-bold">{REFONTIQ_PROJECTS.length}</div><div className="mt-1 text-[11px] text-slate-500">{REFONTIQ_PROJECTS.filter(p => p.status === "active").length} actifs</div></Card>
+          <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Building2 className="h-4 w-4" /> Produits suivis</div><div className="mt-2 text-2xl font-bold">{REFONTIQ_PROJECTS.filter(p => p.status === "active").length}</div><div className="mt-1 text-[11px] text-slate-500">projets actifs suivis</div></Card>
           <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Users className="h-4 w-4" /> Comptes actifs</div><div className="mt-2 text-2xl font-bold">{activeAccounts.toLocaleString("fr-FR")}</div><div className="mt-1 text-[11px] text-slate-500">données reçues</div></Card>
           <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Wallet className="h-4 w-4" /> MRR consolidé</div><div className="mt-2 text-2xl font-bold">{formatFCFA(mrr)}</div><div className="mt-1 text-[11px] text-slate-500">données reçues</div></Card>
           <Card className={`border-slate-200 p-4 ${criticalProjects.length ? "border-red-200 bg-red-50/40" : ""}`}><div className="flex items-center gap-2 text-xs text-slate-500"><AlertTriangle className="h-4 w-4" /> Santé</div><div className="mt-2 text-2xl font-bold">{criticalProjects.length}</div><div className="mt-1 text-[11px] text-slate-500">{criticalProjects.length ? "critique(s)" : "aucun critique"}</div></Card>
@@ -357,7 +334,7 @@ export default function SuperAdminHubPage() {
               <Link href="/admin/billing" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><CreditCard className="h-4 w-4" /> Paiements centraux</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
               <Link href="/admin/integration-checklist" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Checklist projets</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
               <Link href="/admin/trouvetou-traffic" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Trafic Trouvetou</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
-              <button onClick={() => void handleTelegramTest()} className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><Bell className="h-4 w-4" /> Tester les alertes</span><span className="text-[10px] text-slate-400">{telegramTested ? "Testé" : "Test"}</span></button>
+              <div className="flex items-center justify-between rounded-xl border p-3 text-sm text-slate-500"><span className="flex items-center gap-2"><Bell className="h-4 w-4" /> Alertes externes</span><span className="text-[10px]">Telegram suspendu</span></div>
             </div>
           </Card>
         </section>
@@ -396,7 +373,7 @@ export default function SuperAdminHubPage() {
               <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3"><span className="text-xs">Réception métriques</span><Badge variant="outline">{metrics.length ? "Active" : "En attente"}</Badge></div>
               <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3"><span className="text-xs">Fraîcheur des données</span><Badge variant="outline">{staleProjects.length ? `${staleProjects.length} à vérifier` : "OK"}</Badge></div>
               <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3"><span className="text-xs">Paiements en attente</span><Badge variant="outline">{pendingPayments.length ? `${pendingPayments.length} action(s)` : "Aucun"}</Badge></div>
-              <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3"><span className="text-xs">Telegram</span><Badge variant="outline">{telegramTested ? "Testé" : "Non testé"}</Badge></div>
+              <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3"><span className="text-xs">Alertes Telegram</span><Badge variant="outline">Hors service</Badge></div>
             </div>
           </Card>
         </section>
