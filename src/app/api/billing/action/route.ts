@@ -35,6 +35,7 @@ export async function POST(req: Request) {
     if (error) throw error;
 
     const request = Array.isArray(data) ? data[0] : data;
+    const admin = createAdminClient();
     if (!request) throw new Error("Demande introuvable");
 
     const callbackConfig: Record<string, string | undefined> = {
