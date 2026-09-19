@@ -27,8 +27,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "requestId et action requis" }, { status: 400 });
     }
 
-    const admin = createAdminClient();
-    const { data, error } = await admin.rpc(
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc(
       action === "validate" ? "validate_payment_request" : "reject_payment_request",
       { p_request_id: requestId }
     );
