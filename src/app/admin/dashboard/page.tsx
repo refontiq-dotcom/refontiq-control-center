@@ -372,7 +372,7 @@ export default function SuperAdminHubPage() {
           {activeProjects.length > 0 && (
             <div className="mt-6 pt-4 border-t">
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium text-slate-700">Suivi du trafic</span>
+                <span className="text-sm font-medium text-slate-700">Suivi du trafic</span>\n              </div>\n              <div className="flex flex-wrap gap-2 mb-4">\n                <Link href="/admin/integration-checklist" className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium text-slate-700 hover:bg-slate-100">\n                  Checklist des projets\n                  <ArrowRight className="w-3 h-3" />\n                </Link>\n              </div>\n              <div className="flex items-center gap-2 mb-3">\n                <span className="text-sm font-medium text-slate-700">Suivi du trafic</span>
               </div>
               <div className="flex flex-wrap gap-2 mb-4">
                 <Link
