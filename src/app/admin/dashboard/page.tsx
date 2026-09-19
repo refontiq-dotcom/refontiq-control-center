@@ -45,16 +45,6 @@ interface PortfolioMetric {
   derniere_synchro: string;
 }
 
-interface PendingPayment {
-  id: string;
-  produit: string;
-  produit_ref: string | null;
-  plan: string;
-  amount: number;
-  status: string;
-  created_at: string;
-}
-
 interface Alert {
   id: string;
   type: string;
@@ -158,7 +148,6 @@ export default function SuperAdminHubPage() {
   const [loading, setLoading] = useState(true);
   const [metricsStatus, setMetricsStatus] = useState<MetricsStatus>("synchronisation");
   const [metrics, setMetrics] = useState<PortfolioMetric[]>([]);
-  const [pendingPayments, setPendingPayments] = useState<PendingPayment[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [metricsFetched, setMetricsFetched] = useState(false);
   const [telegramTested, setTelegramTested] = useState(false);
@@ -190,7 +179,6 @@ export default function SuperAdminHubPage() {
       setMetrics(metricsData);
       if (metricsData.length) setMetricsFetched(true);
       setLastSyncAt(new Date().toISOString());
-      setPendingPayments(paymentsData);
       setAlerts(alertsData);
     } catch {
       setMetricsStatus("erreur");
@@ -413,7 +401,10 @@ export default function SuperAdminHubPage() {
           </div>
 
           <Card className="p-5">
-            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Liens d'administration</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Liens d'administration</h3>
+              <Link href="/admin/billing" className="text-xs font-medium text-slate-700 underline hover:text-slate-900">Ouvrir la facturation centrale</Link>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {REFONTIQ_PROJECTS.filter((p) => p.status === "active").map((project) => (
                 <div key={project.id} className="flex items-center justify-between rounded-lg border p-3">
