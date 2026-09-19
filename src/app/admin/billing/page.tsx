@@ -6,12 +6,12 @@ import { ArrowLeft, Check, Loader2, RefreshCw, X } from "lucide-react";
 
 type PaymentRequest = {
   id: string;
-  product_id: string;
-  tenant_id: string;
+  produit: string;
+  produit_ref: string | null;
+  plan: string;
   amount: number;
   status: string;
   sender_phone: string | null;
-  payment_provider: string | null;
   created_at: string;
   validated_at: string | null;
 };
@@ -89,9 +89,7 @@ export default function AdminBillingPage() {
         </section>
 
         <section className="rounded-xl border bg-white">
-          <div className="border-b p-4">
-            <h2 className="font-semibold text-slate-900">Demandes Schooly</h2>
-          </div>
+          <div className="border-b p-4"><h2 className="font-semibold text-slate-900">Demandes Schooly</h2></div>
           {loading ? (
             <div className="flex items-center gap-2 p-6 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Chargement…</div>
           ) : requests.length === 0 ? (
@@ -101,24 +99,18 @@ export default function AdminBillingPage() {
               {requests.map((r) => (
                 <div key={r.id} className="grid gap-3 p-4 md:grid-cols-[1fr_auto_auto] md:items-center">
                   <div>
-                    <div className="text-sm font-medium text-slate-900">Établissement {r.tenant_id}</div>
+                    <div className="text-sm font-medium text-slate-900">Schooly • établissement {r.produit_ref || "—"}</div>
                     <div className="mt-1 text-xs text-slate-500">
-                      {new Date(r.created_at).toLocaleString("fr-FR")} • {r.payment_provider || "manuel"} • {r.sender_phone || "—"}
+                      {r.plan} • {new Date(r.created_at).toLocaleString("fr-FR")} • {r.sender_phone || "—"}
                     </div>
                   </div>
                   <div className="text-sm font-semibold text-slate-900">{money(r.amount)}</div>
                   {r.status === "pending" ? (
                     <div className="flex gap-2">
-                      <button disabled={working === r.id} onClick={() => void decide(r.id, "validate")} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white disabled:opacity-50">
-                        <Check className="h-3.5 w-3.5" /> Valider
-                      </button>
-                      <button disabled={working === r.id} onClick={() => void decide(r.id, "reject")} className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 disabled:opacity-50">
-                        <X className="h-3.5 w-3.5" /> Rejeter
-                      </button>
+                      <button disabled={working === r.id} onClick={() => void decide(r.id, "validate")} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white disabled:opacity-50"><Check className="h-3.5 w-3.5" /> Valider</button>
+                      <button disabled={working === r.id} onClick={() => void decide(r.id, "reject")} className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 disabled:opacity-50"><X className="h-3.5 w-3.5" /> Rejeter</button>
                     </div>
-                  ) : (
-                    <span className="text-xs font-medium uppercase text-slate-500">{r.status}</span>
-                  )}
+                  ) : <span className="text-xs font-medium uppercase text-slate-500">{r.status}</span>}
                 </div>
               ))}
             </div>
