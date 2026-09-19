@@ -69,8 +69,8 @@ npm run dev
 | Variable | Description |
 |----------|-------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé service role (admin) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé anonyme Supabase |
+| `SUPABASE_SECRET_KEY` | Clé service role (admin) |
 | `SUPER_ADMIN_EMAIL` | Email du compte Super Admin |
 | `TELEGRAM_BOT_TOKEN` | Token bot Telegram (@BotFather) |
 | `TELEGRAM_CHAT_ID` | ID du chat/canal destinataire |
@@ -88,7 +88,8 @@ Chaque produit doit :
   "nom": "Schooly",
   "mrr": 1500000,
   "comptes_actifs": 42,
-  "statut_sante": "healthy"
+  "statut_sante": "healthy",
+  "derniere_synchro": "2026-09-19T17:43:00.000Z"
 }
 ```
 Header: `Authorization: Bearer <METRICS_PUSH_SECRET>`
