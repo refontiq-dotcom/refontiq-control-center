@@ -371,6 +371,19 @@ export default function SuperAdminHubPage() {
 
           {activeProjects.length > 0 && (
             <div className="mt-6 pt-4 border-t">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-sm font-medium text-slate-700">Suivi du trafic</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Link
+                  href="/admin/trouvetou-traffic"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium text-[#7C2D12] hover:bg-orange-50"
+                  style={{ borderColor: "#7C2D1240" }}
+                >
+                  Trafic Trouvetou
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-sm font-medium text-slate-700">Accès aux consoles</span>
               </div>
