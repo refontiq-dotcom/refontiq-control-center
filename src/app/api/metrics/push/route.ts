@@ -15,9 +15,26 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { projet, nom, mrr, comptes_actifs, statut_sante } = body;
 
-    // Validation basique
-    if (!projet || !nom) {
-      return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
+    const allowedProjects = new Set(["sejoura", "schooly", "docly", "trouvetou"]);
+    const allowedHealth = new Set(["healthy", "warning", "critical", "unknown"]);
+
+    if (!projet || !nom || !allowedProjects.has(projet)) {
+      return NextResponse.json({ error: "Produit invalide" }, { status: 400 });
+    }
+
+    if (statut_sante !== undefined && !allowedHealth.has(statut_sante)) {
+      return NextResponse.json({ error: "Statut de santé invalide" }, { status: 400 });
+    }
+
+    if (mrr !== undefined && (!Number.isInteger(Number(mrr)) || Number(mrr) < 0)) {
+      return NextResponse.json({ error: "MRR invalide" }, { status: 400 });
+    }
+
+    if (
+      comptes_actifs !== undefined &&
+      (!Number.isInteger(Number(comptes_actifs)) || Number(comptes_actifs) < 0)
+    ) {
+      return NextResponse.json({ error: "Nombre de comptes actifs invalide" }, { status: 400 });
     }
 
     const admin = createAdminClient();
