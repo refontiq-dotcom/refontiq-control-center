@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
+import { AdminNotifications } from "@/components/admin-notifications";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -275,6 +276,7 @@ export default function SuperAdminHubPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <AdminNotifications />
             <span className="hidden text-[11px] text-slate-500 md:inline">{lastSyncAt ? `Synchronisé ${formatRelative(lastSyncAt)}` : "Synchronisation…"}</span>
             <Button variant="outline" size="sm" onClick={() => void handleRefresh()} className="gap-1.5"><RefreshCw className={`h-4 w-4 ${metricsStatus === "chargement" ? "animate-spin" : ""}`} /> <span className="hidden sm:inline">Actualiser</span></Button>
             <Button variant="ghost" size="sm" onClick={() => void handleLogout()} aria-label="Déconnexion"><LogOut className="h-4 w-4" /></Button>
