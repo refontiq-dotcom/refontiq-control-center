@@ -10,7 +10,7 @@
   const existing=await registration.pushManager.getSubscription();
   const subscription=existing || await registration.pushManager.subscribe({
     userVisibleOnly:true,
-    applicationServerKey:Uint8Array.from(atob(config.publicKey.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0))
+    applicationServerKey:(()=>{const base64=config.publicKey.replace(/-/g,"+").replace(/_/g,"/")+"===".slice(0,(4-config.publicKey.length%4)%4);const raw=atob(base64);return Uint8Array.from(raw,c=>c.charCodeAt(0));})()
   });
   await fetch("/api/push/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({subscription})});
   setSound(true); localStorage.setItem(SOUND_KEY,"1"); playAlertSound();
