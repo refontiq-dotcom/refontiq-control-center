@@ -103,9 +103,9 @@ export default function TrouvetouTrafficPage() {
             <div>
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-[#7C2D12]" />
-                <h1 className="font-semibold text-slate-900 dark:text-white">Trafic Trouvetou</h1>
+                <h1 className="font-semibold text-slate-900 dark:text-white">Trafic publicité</h1>
               </div>
-              <p className="text-xs text-slate-500">Suivi des visites du portail public</p>
+              <p className="text-xs text-slate-500">Suivi du trafic publicitaire</p>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={load} disabled={loading} className="gap-2">
