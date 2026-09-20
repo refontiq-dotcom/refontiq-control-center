@@ -16,7 +16,6 @@ import {
   Stethoscope,
   TrendingUp,
   Activity,
-  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
