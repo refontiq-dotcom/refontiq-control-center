@@ -157,9 +157,7 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
 
         <div className="mt-4 flex items-center justify-between">
           <span className="text-[11px] text-slate-400">{project.statusLabel ?? "Projet"}</span>
-          <a href={project.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-slate-700 hover:text-slate-950">
-            Ouvrir <ExternalLink className="h-3 w-3" />
-          </a>
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-700">Voir le cockpit <ChevronRight className="h-3 w-3" /></span>
         </div>
       </div>
       </Card>
