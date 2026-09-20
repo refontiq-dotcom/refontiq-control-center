@@ -141,7 +141,7 @@ export default function ProjectCockpitPage() {
 
   if (!project) {
     return (
-      <main className="min-h-screen bg-slate-50 p-6">
+      <main className="p-6">
         <Card className="mx-auto max-w-xl p-8 text-center">
           <h1 className="text-lg font-semibold">Projet introuvable</h1>
           <Button className="mt-4" onClick={() => router.push("/admin/dashboard")}>Retour à l'ensemble</Button>
@@ -151,11 +151,11 @@ export default function ProjectCockpitPage() {
   }
 
   if (loading) {
-    return <div className="flex min-h-[80vh] items-center justify-center bg-slate-50"><RefreshCw className="h-7 w-7 animate-spin text-slate-700" /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><RefreshCw className="h-7 w-7 animate-spin text-slate-700" /></div>;
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="text-slate-900">
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>

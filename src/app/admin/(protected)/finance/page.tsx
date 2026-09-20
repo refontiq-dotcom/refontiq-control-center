@@ -69,7 +69,7 @@ export default function AdminBillingPage() {
   const processed = requests.filter((r) => r.status !== "pending");
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8">
+    <main className="px-4 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex items-center justify-between">
           <div>

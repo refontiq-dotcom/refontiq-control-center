@@ -108,10 +108,10 @@ function formatRelative(value?: string | null) {
 
 function healthMeta(health: Health) {
   return {
-    healthy: { label: "Sain", className: "border-emerald-200 bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
-    warning: { label: "Attention", className: "border-amber-200 bg-amber-50 text-amber-700", dot: "bg-amber-500" },
-    critical: { label: "Critique", className: "border-red-200 bg-red-50 text-red-700", dot: "bg-red-500" },
-    unknown: { label: "Inconnu", className: "border-slate-200 bg-slate-50 text-slate-600", dot: "bg-slate-400" },
+    healthy: { label: "Sain", className: "border-emerald-200 bg-emerald-50 text-emerald-700", dot: "bg-emerald-500", text: "text-emerald-600" },
+    warning: { label: "Attention", className: "border-amber-200 bg-amber-50 text-amber-700", dot: "bg-amber-500", text: "text-amber-600" },
+    critical: { label: "Critique", className: "border-red-200 bg-red-50 text-red-700", dot: "bg-red-500", text: "text-red-600" },
+    unknown: { label: "Inconnu", className: "border-slate-200 bg-slate-50 text-slate-600", dot: "bg-slate-400", text: "text-slate-500" },
   }[health];
 }
 
@@ -127,37 +127,33 @@ function StatCard({
   value,
   hint,
   tone = "blue",
-  progress,
 }: {
   icon: ComponentType<{ className?: string }>;
   label: string;
   value: string;
   hint: string;
   tone?: "blue" | "indigo" | "emerald" | "amber" | "red";
-  progress?: number;
 }) {
-  const tones: Record<string, { tile: string; ring: string }> = {
-    blue: { tile: "bg-blue-600/10 text-blue-600", ring: "ring-blue-100" },
-    indigo: { tile: "bg-indigo-600/10 text-indigo-600", ring: "ring-indigo-100" },
-    emerald: { tile: "bg-emerald-600/10 text-emerald-600", ring: "ring-emerald-100" },
-    amber: { tile: "bg-amber-500/10 text-amber-600", ring: "ring-amber-100" },
-    red: { tile: "bg-red-600/10 text-red-600", ring: "ring-red-100" },
+  const tones: Record<string, { tile: string; text: string }> = {
+    blue: { tile: "bg-blue-50 text-blue-600", text: "text-blue-600" },
+    indigo: { tile: "bg-indigo-50 text-indigo-600", text: "text-indigo-600" },
+    emerald: { tile: "bg-emerald-50 text-emerald-600", text: "text-emerald-600" },
+    amber: { tile: "bg-amber-50 text-amber-600", text: "text-amber-600" },
+    red: { tile: "bg-red-50 text-red-600", text: "text-red-600" },
   };
   const t = tones[tone];
 
   return (
-    <div className={`soft-card flex items-center gap-4 rounded-3xl border border-white/70 bg-white/80 p-4 ring-1 ${t.ring}`}>
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${t.tile}`}>
-        <Icon className="h-5 w-5" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
-        <div className="mt-1 text-xl font-bold tracking-tight text-slate-900">{value}</div>
-        <div className="mt-0.5 truncate text-[11px] text-slate-500">{hint}</div>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="flex items-start justify-between gap-3">
+        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tile}`}>
+          <Icon className="h-5 w-5" />
+        </span>
+        <ArrowUpRight className="h-4 w-4 text-slate-300" />
       </div>
-      {typeof progress === "number" && (
-        <RoundProgress value={progress} size={46} stroke={5} color="#2563eb" label={`${Math.round(progress)}%`} />
-      )}
+      <div className="mt-3.5 text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
+      <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{value}</div>
+      <div className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${t.text}`}>{hint}</div>
     </div>
   );
 }
@@ -176,7 +172,7 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <Card className={`soft-card rounded-3xl border-white/70 bg-white/80 p-5 backdrop-blur ${className}`}>
+    <Card className={`rounded-2xl border-slate-200 bg-white p-5 ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="font-semibold tracking-tight text-slate-900">{title}</h2>
@@ -199,51 +195,50 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
 
   return (
     <Link href={`/admin/projects/${project.id}`} className="block h-full">
-      <Card className="soft-card group h-full overflow-hidden rounded-3xl border-white/70 bg-white/80 backdrop-blur transition hover:-translate-y-0.5 hover:shadow-xl">
-        <div className="h-1.5" style={{ background: `linear-gradient(90deg, ${project.accent}, ${project.accent}55)` }} />
-        <div className="p-5">
+      <Card className="group flex h-full flex-col rounded-2xl border-slate-200 bg-white p-5 transition hover:border-blue-200">
+        <div className="flex-1">
           <div className="flex items-start justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-                style={{ backgroundColor: `${project.accent}14`, color: project.accent }}
-              >
-                <ProjectIcon iconName={project.icon} className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="truncate font-semibold text-slate-900">{project.name}</h3>
-                  <span className={`h-2 w-2 shrink-0 rounded-full ${health.dot}`} />
-                </div>
-                <p className="truncate text-xs text-slate-500">{project.tagline}</p>
-              </div>
-            </div>
-            <Badge variant="outline" className={`shrink-0 ${health.className}`}>{health.label}</Badge>
+            <span
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+              style={{ backgroundColor: `${project.accent}14`, color: project.accent }}
+            >
+              <ProjectIcon iconName={project.icon} className="h-5 w-5" />
+            </span>
+            <ArrowUpRight className="h-4 w-4 text-slate-300 transition group-hover:text-blue-500" />
           </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            <div className="rounded-2xl bg-slate-50/80 p-2.5">
+          <div className="mt-4 flex items-center gap-2">
+            <h3 className="truncate font-semibold text-slate-900">{project.name}</h3>
+            <span className={`h-2 w-2 shrink-0 rounded-full ${health.dot}`} />
+          </div>
+          <p className="mt-0.5 truncate text-xs text-slate-500">{project.tagline}</p>
+
+          <div className="mt-4">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">MRR</div>
+            <div className="mt-1 text-xl font-bold tracking-tight text-slate-900">{metric ? formatFCFA(metric.mrr) : "—"}</div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-slate-50 px-3 py-2">
               <div className="text-[10px] uppercase tracking-wide text-slate-400">Comptes</div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">{metric ? metric.comptes_actifs.toLocaleString("fr-FR") : "—"}</div>
+              <div className="mt-0.5 text-sm font-semibold text-slate-900">{metric ? metric.comptes_actifs.toLocaleString("fr-FR") : "—"}</div>
             </div>
-            <div className="rounded-2xl bg-slate-50/80 p-2.5">
-              <div className="text-[10px] uppercase tracking-wide text-slate-400">MRR</div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">{metric ? formatFCFA(metric.mrr) : "—"}</div>
-            </div>
-            <div className="rounded-2xl bg-slate-50/80 p-2.5">
+            <div className="rounded-xl bg-slate-50 px-3 py-2">
               <div className="text-[10px] uppercase tracking-wide text-slate-400">Sync</div>
-              <div className={`mt-1 text-[11px] font-medium ${stale ? "text-amber-700" : "text-emerald-700"}`}>
+              <div className={`mt-0.5 text-[11px] font-semibold ${stale ? "text-amber-600" : "text-emerald-600"}`}>
                 {metric ? formatRelative(metric.derniere_synchro) : "Aucune"}
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-[11px] text-slate-400">{project.statusLabel ?? "Projet"}</span>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
-              Voir le cockpit <ChevronRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-            </span>
-          </div>
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
+          <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${health.text}`}>
+            <span className={`h-2 w-2 rounded-full ${health.dot}`} /> {health.label}
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
+            Cockpit <ChevronRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+          </span>
         </div>
       </Card>
     </Link>
@@ -408,7 +403,7 @@ export default function SuperAdminHubPage() {
 
   return (
     <div className="min-h-full text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-white/60 bg-white/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/95 backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 md:px-7">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30 lg:hidden">
@@ -429,7 +424,7 @@ export default function SuperAdminHubPage() {
             <button
               type="button"
               onClick={() => void handleRefresh()}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/70 bg-white/80 px-3 text-xs font-semibold text-slate-700 soft-chip transition hover:bg-white"
+              className="soft-chip inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
             >
               <RefreshCw className={`h-4 w-4 ${metricsStatus === "chargement" ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Actualiser</span>
@@ -448,7 +443,7 @@ export default function SuperAdminHubPage() {
 
       <main className="space-y-6 px-4 py-6 md:px-7">
         {/* HERO */}
-        <section className="soft-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0c1c33] via-[#13294b] to-[#1d4ed8] p-6 text-white md:p-7">
+        <section className="soft-card relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0c1c33] via-[#13294b] to-[#1d4ed8] p-6 text-white md:p-7">
           <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-blue-400/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="relative grid gap-7 lg:grid-cols-[1.35fr_1fr] lg:items-center">
@@ -540,7 +535,6 @@ export default function SuperAdminHubPage() {
             value={`${healthyProjects}/${metrics.length || 0}`}
             hint={criticalProjects.length ? `${criticalProjects.length} critique(s)` : "aucun critique"}
             tone={criticalProjects.length ? "red" : "emerald"}
-            progress={healthRatio}
           />
           <StatCard
             icon={CreditCard}
@@ -695,13 +689,13 @@ export default function SuperAdminHubPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher un produit…"
-                  className="h-9 w-full rounded-full border border-white/70 bg-white/80 pl-9 pr-3 text-sm soft-chip outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-200 sm:w-56"
+                  className="soft-chip h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-200 sm:w-56"
                 />
               </div>
               <select
                 value={healthFilter}
                 onChange={(e) => setHealthFilter(e.target.value as typeof healthFilter)}
-                className="h-9 rounded-full border border-white/70 bg-white/80 px-3 text-sm soft-chip outline-none focus:ring-2 focus:ring-blue-200"
+                className="soft-chip h-9 rounded-full border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-blue-200"
               >
                 <option value="all">Toutes les santés</option>
                 <option value="healthy">Sains</option>
@@ -712,7 +706,7 @@ export default function SuperAdminHubPage() {
             </div>
           </div>
           {filteredProjects.length === 0 ? (
-            <Card className="soft-card rounded-3xl border-white/70 bg-white/80 p-8 text-center">
+            <Card className="rounded-2xl border-slate-200 bg-white p-8 text-center">
               <Search className="mx-auto h-6 w-6 text-slate-300" />
               <p className="mt-2 text-sm text-slate-500">Aucun produit ne correspond aux filtres.</p>
             </Card>
@@ -751,7 +745,7 @@ export default function SuperAdminHubPage() {
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-2xl bg-slate-50/80 p-3">
                   <span className="text-xs text-slate-600">{row.label}</span>
-                  <Badge variant="outline" className="border-white/70 bg-white/80 text-slate-700">{row.value}</Badge>
+                  <Badge variant="outline" className="border-slate-200 bg-white text-slate-700">{row.value}</Badge>
                 </div>
               ))}
             </div>

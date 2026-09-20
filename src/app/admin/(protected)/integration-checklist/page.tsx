@@ -153,11 +153,11 @@ export default function IntegrationChecklistPage() {
   }
 
   if (loading && projects.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin" /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div>
       <header className="border-b bg-white">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">

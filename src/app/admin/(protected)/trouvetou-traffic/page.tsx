@@ -93,7 +93,7 @@ export default function TrouvetouTrafficPage() {
   const total30 = useMemo(() => history30.reduce((sum, row) => sum + row.visits, 0), [history30]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="bg-white">
       <header className="border-b bg-white dark:bg-slate-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">

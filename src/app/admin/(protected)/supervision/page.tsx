@@ -93,7 +93,7 @@ export default function IntelligencePage() {
   const warnings = items.filter((item) => item.severity === "warning");
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="text-slate-900">
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
