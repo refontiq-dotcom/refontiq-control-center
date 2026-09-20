@@ -71,6 +71,28 @@
   --ring: 224.3 76.3% 48%;
 }
 
+.dark {
+  --background: 220 14% 6%;
+  --foreground: 210 20% 96%;
+  --card: 220 16% 3%;
+  --card-foreground: 210 20% 96%;
+  --popover: 220 16% 4%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 217.2 91.2% 60%;
+  --primary-foreground: 220 20% 6%;
+  --secondary: 220 10% 12%;
+  --secondary-foreground: 210 20% 96%;
+  --muted: 220 10% 12%;
+  --muted-foreground: 218 10% 60%;
+  --accent: 220 10% 12%;
+  --accent-foreground: 210 20% 96%;
+  --destructive: 0 62.8% 40%;
+  --destructive-foreground: 210 20% 96%;
+  --border: 220 10% 13%;
+  --input: 220 10% 13%;
+  --ring: 217.2 91.2% 60%;
+}
+
 * {
   border-color: hsl(var(--border));
 }
@@ -79,6 +101,11 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+html.dark body {
+  background-color: #050608;
+  color: #e2e8f0;
 }
 
 /* ===== Refontiq Control Center — soft dashboard theme ===== */
@@ -92,6 +119,22 @@ body {
   box-shadow:
     0 1px 2px rgba(23, 37, 84, 0.04),
     0 10px 24px -14px rgba(30, 64, 175, 0.22);
+}
+
+.dark .soft-canvas {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(59, 130, 246, 0.07) 0%, rgba(59, 130, 246, 0) 55%),
+    linear-gradient(180deg, #08090c 0%, #060709 50%, #08090d 100%);
+}
+
+.dark .soft-card {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 16px 32px -20px rgba(0, 0, 0, 0.9);
+}
+
+.dark .soft-chip {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .soft-chip {

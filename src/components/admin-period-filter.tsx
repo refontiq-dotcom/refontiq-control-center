@@ -79,15 +79,15 @@ export function AdminPeriodFilter({
   };
 
   return (
-    <div className="soft-card rounded-3xl border border-white/70 bg-white/80 p-3 backdrop-blur">
+    <div className="soft-card rounded-3xl border border-white/70 bg-white/80 p-3 backdrop-blur dark:border-white/[0.06] dark:bg-[#050608]">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400">
             <CalendarDays className="h-4 w-4" />
           </span>
           <div>
-            <div className="text-xs font-semibold text-slate-900">Période d&apos;analyse</div>
-            <div className="text-[11px] text-slate-500">{label}</div>
+            <div className="text-xs font-semibold text-slate-900 dark:text-white">Période d&apos;analyse</div>
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">{label}</div>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -101,19 +101,19 @@ export function AdminPeriodFilter({
                 className={
                   active
                     ? "rounded-full bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-blue-600/25"
-                    : "rounded-full bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-slate-900"
+                    : "rounded-full bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-slate-900 dark:bg-white/[0.06] dark:text-slate-300 dark:ring-white/10 dark:hover:bg-white/10 dark:hover:text-white"
                 }
               >
                 {preset.label}
               </button>
             );
           })}
-          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200">
-            <span className="text-[10px] text-slate-500">Du</span>
+          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200 dark:bg-black/40 dark:ring-white/10">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">Du</span>
             <input type="date" value={value.from} max={value.to || undefined} onChange={(e) => onChange({ ...value, from: e.target.value })} className="bg-transparent text-xs outline-none" aria-label="Date de début" />
           </label>
-          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200">
-            <span className="text-[10px] text-slate-500">au</span>
+          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200 dark:bg-black/40 dark:ring-white/10">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">au</span>
             <input type="date" value={value.to} min={value.from || undefined} onChange={(e) => onChange({ ...value, to: e.target.value })} className="bg-transparent text-xs outline-none" aria-label="Date de fin" />
           </label>
           {onReset && <button type="button" onClick={onReset} className="rounded-full px-2.5 py-1.5 text-xs font-medium text-slate-500 underline-offset-2 hover:text-slate-900 hover:underline">Réinitialiser</button>}

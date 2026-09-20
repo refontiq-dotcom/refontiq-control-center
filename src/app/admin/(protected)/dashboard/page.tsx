@@ -35,6 +35,7 @@ import {
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
 import { AdminNotifications } from "@/components/admin-notifications";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   AreaChart,
   DonutChart,
@@ -108,10 +109,10 @@ function formatRelative(value?: string | null) {
 
 function healthMeta(health: Health) {
   return {
-    healthy: { label: "Sain", className: "border-emerald-200 bg-emerald-50 text-emerald-700", dot: "bg-emerald-500", text: "text-emerald-600" },
-    warning: { label: "Attention", className: "border-amber-200 bg-amber-50 text-amber-700", dot: "bg-amber-500", text: "text-amber-600" },
-    critical: { label: "Critique", className: "border-red-200 bg-red-50 text-red-700", dot: "bg-red-500", text: "text-red-600" },
-    unknown: { label: "Inconnu", className: "border-slate-200 bg-slate-50 text-slate-600", dot: "bg-slate-400", text: "text-slate-500" },
+    healthy: { label: "Sain", className: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-400", dot: "bg-emerald-500", text: "text-emerald-600 dark:text-emerald-400" },
+    warning: { label: "Attention", className: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400", dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
+    critical: { label: "Critique", className: "border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400", dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
+    unknown: { label: "Inconnu", className: "border-slate-200 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-400", dot: "bg-slate-400", text: "text-slate-500 dark:text-slate-400" },
   }[health];
 }
 
@@ -135,24 +136,24 @@ function StatCard({
   tone?: "blue" | "indigo" | "emerald" | "amber" | "red";
 }) {
   const tones: Record<string, { tile: string; text: string }> = {
-    blue: { tile: "bg-blue-50 text-blue-600", text: "text-blue-600" },
-    indigo: { tile: "bg-indigo-50 text-indigo-600", text: "text-indigo-600" },
-    emerald: { tile: "bg-emerald-50 text-emerald-600", text: "text-emerald-600" },
-    amber: { tile: "bg-amber-50 text-amber-600", text: "text-amber-600" },
-    red: { tile: "bg-red-50 text-red-600", text: "text-red-600" },
+    blue: { tile: "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400", text: "text-blue-600 dark:text-blue-400" },
+    indigo: { tile: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400", text: "text-indigo-600 dark:text-indigo-400" },
+    emerald: { tile: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400", text: "text-emerald-600 dark:text-emerald-400" },
+    amber: { tile: "bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400", text: "text-amber-600 dark:text-amber-400" },
+    red: { tile: "bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400", text: "text-red-600 dark:text-red-400" },
   };
   const t = tones[tone];
 
   return (
-    <div className="soft-card rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="soft-card rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#050608]">
       <div className="flex items-start justify-between gap-3">
         <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tile}`}>
           <Icon className="h-5 w-5" />
         </span>
-        <ArrowUpRight className="h-4 w-4 text-slate-300" />
+        <ArrowUpRight className="h-4 w-4 text-slate-300 dark:text-slate-600" />
       </div>
       <div className="mt-3.5 text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{value}</div>
+      <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{value}</div>
       <div className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${t.text}`}>{hint}</div>
     </div>
   );
@@ -172,14 +173,13 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <Card className={`soft-card rounded-2xl border-slate-200 bg-white p-5 ${className}`}>
+    <Card className={`soft-card rounded-2xl border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-[#050608] ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-semibold tracking-tight text-slate-900">{title}</h2>
+          <h2 className="font-semibold tracking-tight text-slate-900 dark:text-white">{title}</h2>
           {subtitle && <p className="mt-1 text-xs text-slate-500">{subtitle}</p>}
         </div>
-        {Icon && (
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/5 text-slate-500">
+        {Icon && (          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/5 text-slate-500 dark:bg-white/10 dark:text-slate-300">
             <Icon className="h-4 w-4" />
           </span>
         )}
@@ -195,7 +195,7 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
 
   return (
     <Link href={`/admin/projects/${project.id}`} className="block h-full">
-      <Card className="soft-card group flex h-full flex-col rounded-2xl border-slate-200 bg-white p-5 transition hover:border-blue-200">
+      <Card className="soft-card group flex h-full flex-col rounded-2xl border-slate-200 bg-white p-5 transition hover:border-blue-200 dark:border-white/10 dark:bg-[#050608] dark:hover:border-blue-500/50">
         <div className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <span
@@ -204,26 +204,26 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
             >
               <ProjectIcon iconName={project.icon} className="h-5 w-5" />
             </span>
-            <ArrowUpRight className="h-4 w-4 text-slate-300 transition group-hover:text-blue-500" />
+            <ArrowUpRight className="h-4 w-4 text-slate-300 transition group-hover:text-blue-500 dark:text-slate-600" />
           </div>
 
           <div className="mt-4 flex items-center gap-2">
-            <h3 className="truncate font-semibold text-slate-900">{project.name}</h3>
+            <h3 className="truncate font-semibold text-slate-900 dark:text-white">{project.name}</h3>
             <span className={`h-2 w-2 shrink-0 rounded-full ${health.dot}`} />
           </div>
           <p className="mt-0.5 truncate text-xs text-slate-500">{project.tagline}</p>
 
           <div className="mt-4">
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">MRR</div>
-            <div className="mt-1 text-xl font-bold tracking-tight text-slate-900">{metric ? formatFCFA(metric.mrr) : "—"}</div>
+            <div className="mt-1 text-xl font-bold tracking-tight text-slate-900 dark:text-white">{metric ? formatFCFA(metric.mrr) : "—"}</div>
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="rounded-xl bg-slate-50 px-3 py-2">
+            <div className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-black/40">
               <div className="text-[10px] uppercase tracking-wide text-slate-400">Comptes</div>
-              <div className="mt-0.5 text-sm font-semibold text-slate-900">{metric ? metric.comptes_actifs.toLocaleString("fr-FR") : "—"}</div>
+              <div className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">{metric ? metric.comptes_actifs.toLocaleString("fr-FR") : "—"}</div>
             </div>
-            <div className="rounded-xl bg-slate-50 px-3 py-2">
+            <div className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-black/40">
               <div className="text-[10px] uppercase tracking-wide text-slate-400">Sync</div>
               <div className={`mt-0.5 text-[11px] font-semibold ${stale ? "text-amber-600" : "text-emerald-600"}`}>
                 {metric ? formatRelative(metric.derniere_synchro) : "Aucune"}
@@ -232,7 +232,7 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5 dark:border-white/10">
           <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${health.text}`}>
             <span className={`h-2 w-2 rounded-full ${health.dot}`} /> {health.label}
           </span>
@@ -403,28 +403,29 @@ export default function SuperAdminHubPage() {
 
   return (
     <div className="min-h-full text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-sky-200/60 bg-sky-100/95 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-sky-200/60 bg-sky-100/95 backdrop-blur dark:border-white/[0.06] dark:bg-[#0c0e13]/95">
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 md:px-7">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30 lg:hidden">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-blue-600">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
                 <Activity className="h-3.5 w-3.5" /> Centre de pilotage
               </div>
-              <h1 className="text-lg font-bold tracking-tight">Vue globale de Refontiq</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Vue globale de Refontiq</h1>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="hidden text-[11px] text-slate-500 md:inline">
+            <span className="hidden text-[11px] text-slate-500 md:inline dark:text-slate-400">
               {lastSyncAt ? `Synchronisé ${formatRelative(lastSyncAt)}` : "Synchronisation…"}
             </span>
             <AdminNotifications />
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => void handleRefresh()}
-              className="soft-chip inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="soft-chip inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#050608] dark:text-slate-200 dark:hover:bg-slate-700"
             >
               <RefreshCw className={`h-4 w-4 ${metricsStatus === "chargement" ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Actualiser</span>
@@ -433,7 +434,7 @@ export default function SuperAdminHubPage() {
               type="button"
               onClick={() => void handleLogout()}
               aria-label="Déconnexion"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white hover:text-slate-900"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
             >
               <LogOut className="h-4 w-4" />
             </button>
@@ -556,17 +557,17 @@ export default function SuperAdminHubPage() {
               <div className="space-y-4">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
-                    <div className="text-3xl font-bold tracking-tight">{formatFCFA(mrr)}</div>
-                    <div className="mt-1 text-[11px] text-slate-500">Cumul actuel des produits connectés</div>
+                  <div className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{formatFCFA(mrr)}</div>
+                  <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Cumul actuel des produits connectés</div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
                     <TrendingUp className="h-3.5 w-3.5" /> {trendValues.length} points
                   </div>
                 </div>
                 <AreaChart id="mrr-area" values={trendValues} stroke="#2563eb" height={130} />
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
                 Pas encore assez d&apos;historique pour tracer l&apos;évolution du MRR.
               </div>
             )}
@@ -579,17 +580,17 @@ export default function SuperAdminHubPage() {
                 <div className="w-full max-w-[200px] space-y-2">
                   {donutData.map((d) => (
                     <div key={d.label} className="flex items-center justify-between gap-2 text-xs">
-                      <span className="inline-flex items-center gap-2 text-slate-600">
+                      <span className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300">
                         <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
                         {d.label}
                       </span>
-                      <span className="font-semibold text-slate-900">{Math.round((d.value / (donutData.reduce((s, x) => s + x.value, 0) || 1)) * 100)}%</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{Math.round((d.value / (donutData.reduce((s, x) => s + x.value, 0) || 1)) * 100)}%</span>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
                 Aucun revenu transmis sur la période.
               </div>
             )}
@@ -602,7 +603,7 @@ export default function SuperAdminHubPage() {
             {grouped.groups.length ? (
               <GroupedBars groups={grouped.groups} series={grouped.series} height={190} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
                 Aucun compte actif rapporté pour le moment.
               </div>
             )}
@@ -611,7 +612,7 @@ export default function SuperAdminHubPage() {
           <SectionCard title="Objectifs de disponibilité" subtitle="Part de produits en état sain." icon={Activity}>
             <div className="flex items-center gap-5">
               <RoundProgress value={healthRatio} size={92} stroke={9} color="#10b981" label={`${Math.round(healthRatio)}%`} />
-              <div className="space-y-2 text-xs text-slate-600">
+              <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> {healthyProjects} sain(s)</div>
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> {warningProjects.length} attention</div>
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-red-500" /> {criticalProjects.length} critique(s)</div>
@@ -627,10 +628,10 @@ export default function SuperAdminHubPage() {
             <div className="space-y-2">
               {insights.map((item, index) => {
                 const styles = {
-                  critical: "border-red-200 bg-red-50/70 text-red-800",
-                  warning: "border-amber-200 bg-amber-50/70 text-amber-800",
-                  info: "border-slate-200 bg-slate-50 text-slate-700",
-                  success: "border-emerald-200 bg-emerald-50/70 text-emerald-800",
+                  critical: "border-red-200 bg-red-50/70 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300",
+                  warning: "border-amber-200 bg-amber-50/70 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
+                  info: "border-slate-200 bg-slate-50 text-slate-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-300",
+                  success: "border-emerald-200 bg-emerald-50/70 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300",
                 }[item.tone];
                 return (
                   <div key={index} className={`flex items-start justify-between gap-3 rounded-2xl border p-3.5 ${styles}`}>
@@ -661,13 +662,13 @@ export default function SuperAdminHubPage() {
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white/70 p-3 text-sm font-medium text-slate-700 transition hover:border-blue-100 hover:bg-white"
+                  className="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white/70 p-3 text-sm font-medium text-slate-700 transition hover:border-blue-100 hover:bg-white dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:border-blue-500/40 dark:hover:bg-white/10"
                 >
-                  <span className="flex items-center gap-2.5"><action.icon className="h-4 w-4 text-blue-600" /> {action.label}</span>
+                  <span className="flex items-center gap-2.5"><action.icon className="h-4 w-4 text-blue-600 dark:text-blue-400" /> {action.label}</span>
                   <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-blue-500" />
                 </Link>
               ))}
-              <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 p-3 text-sm text-slate-400">
+              <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 p-3 text-sm text-slate-400 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-500">
                 <span className="flex items-center gap-2.5"><Bell className="h-4 w-4" /> Alertes externes</span>
                 <span className="text-[10px]">Telegram suspendu</span>
               </div>
@@ -680,7 +681,7 @@ export default function SuperAdminHubPage() {
           <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-lg font-bold tracking-tight">Produits Refontiq</h2>
-              <p className="mt-1 text-xs text-slate-500">Cliquez sur un produit pour ouvrir son cockpit complet et isolé.</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Cliquez sur un produit pour ouvrir son cockpit complet et isolé.</p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative">
@@ -689,13 +690,13 @@ export default function SuperAdminHubPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher un produit…"
-                  className="soft-chip h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-200 sm:w-56"
+                  className="soft-chip h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-200 sm:w-56 dark:border-white/10 dark:bg-[#050608] dark:text-white dark:placeholder:text-slate-500"
                 />
               </div>
               <select
                 value={healthFilter}
                 onChange={(e) => setHealthFilter(e.target.value as typeof healthFilter)}
-                className="soft-chip h-9 rounded-full border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="soft-chip h-9 rounded-full border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-blue-200 dark:border-white/10 dark:bg-[#050608] dark:text-white"
               >
                 <option value="all">Toutes les santés</option>
                 <option value="healthy">Sains</option>
@@ -706,7 +707,7 @@ export default function SuperAdminHubPage() {
             </div>
           </div>
           {filteredProjects.length === 0 ? (
-            <Card className="soft-card rounded-2xl border-slate-200 bg-white p-8 text-center">
+            <Card className="soft-card rounded-2xl border-slate-200 bg-white p-8 text-center dark:border-white/10 dark:bg-[#050608]">
               <Search className="mx-auto h-6 w-6 text-slate-300" />
               <p className="mt-2 text-sm text-slate-500">Aucun produit ne correspond aux filtres.</p>
             </Card>
@@ -722,16 +723,16 @@ export default function SuperAdminHubPage() {
           <SectionCard title="Centre de supervision" subtitle="Les alertes et signaux récents restent centralisés ici." icon={Bell}>
             <div className="space-y-2">
               {alerts.slice(0, 6).map((alert) => (
-                <div key={alert.id} className="flex gap-3 rounded-2xl border border-slate-100 bg-white/70 p-3">
+                <div key={alert.id} className="flex gap-3 rounded-2xl border border-slate-100 bg-white/70 p-3 dark:border-white/10 dark:bg-white/[0.03]">
                   <Bell className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                   <div className="min-w-0">
                     <div className="text-[10px] uppercase tracking-wide text-slate-400">{alert.type}</div>
-                    <div className="mt-0.5 break-words text-sm text-slate-700">{alert.message}</div>
+                    <div className="mt-0.5 break-words text-sm text-slate-700 dark:text-slate-200">{alert.message}</div>
                     <div className="mt-1 text-[10px] text-slate-400">{new Date(alert.created_at).toLocaleString("fr-FR")}</div>
                   </div>
                 </div>
               ))}
-              {alerts.length === 0 && <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-center text-xs text-slate-500">Aucune alerte reçue.</div>}
+              {alerts.length === 0 && <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">Aucune alerte reçue.</div>}
             </div>
           </SectionCard>
 
@@ -743,16 +744,16 @@ export default function SuperAdminHubPage() {
                 { label: "Paiements en attente", value: pendingPayments.length ? `${pendingPayments.length} action(s)` : "Aucun" },
                 { label: "Alertes Telegram", value: "Hors service" },
               ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-2xl bg-slate-50/80 p-3">
-                  <span className="text-xs text-slate-600">{row.label}</span>
-                  <Badge variant="outline" className="border-slate-200 bg-white text-slate-700">{row.value}</Badge>
+                <div key={row.label} className="flex items-center justify-between rounded-2xl bg-slate-50/80 p-3 dark:bg-white/[0.03]">
+                  <span className="text-xs text-slate-600 dark:text-slate-300">{row.label}</span>
+                  <Badge variant="outline" className="border-slate-200 bg-white text-slate-700 dark:border-white/10 dark:bg-black/40 dark:text-slate-200">{row.value}</Badge>
                 </div>
               ))}
             </div>
           </SectionCard>
         </section>
 
-        <footer className="flex flex-col gap-2 border-t border-white/60 pt-4 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col gap-2 border-t border-sky-200/60 pt-4 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between dark:border-white/5">
           <span>Refontiq Control Center • Super Admin central uniquement</span>
           <span className="flex items-center gap-1"><Clock3 className="h-3 w-3" /> Actualisation automatique toutes les 30 secondes</span>
         </footer>

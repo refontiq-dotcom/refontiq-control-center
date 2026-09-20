@@ -110,8 +110,8 @@ export function DonutChart({
         </g>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xl font-bold text-slate-900">{centerValue}</span>
-        <span className="text-[11px] text-slate-500">{centerLabel}</span>
+        <span className="text-xl font-bold text-slate-900 dark:text-white">{centerValue}</span>
+        <span className="text-[11px] text-slate-500 dark:text-slate-400">{centerLabel}</span>
       </div>
     </div>
   );
@@ -136,7 +136,7 @@ export function GroupedBars({
 
   return (
     <div>
-      <div className="flex items-center gap-4 text-[11px] font-medium text-slate-500">
+      <div className="flex items-center gap-4 text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {series.map((s) => (
           <span key={s.label} className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} />
@@ -145,7 +145,7 @@ export function GroupedBars({
         ))}
       </div>
       <div className="mt-3 flex gap-3">
-        <div className="flex flex-col justify-between pb-5 text-right text-[10px] text-slate-400" style={{ height }}>
+        <div className="flex flex-col justify-between pb-5 text-right text-[10px] text-slate-400 dark:text-slate-500" style={{ height }}>
           {Array.from({ length: yTicks + 1 }).map((_, i) => (
             <span key={i}>{formatCompact(Math.round((max * (yTicks - i)) / yTicks))}</span>
           ))}
@@ -153,7 +153,7 @@ export function GroupedBars({
         <div className="relative flex-1">
           <div className="absolute inset-x-0 top-0 flex flex-col justify-between" style={{ height: height - 34 }}>
             {Array.from({ length: yTicks + 1 }).map((_, i) => (
-              <span key={i} className="block h-px w-full bg-slate-100" />
+              <span key={i} className="block h-px w-full bg-slate-100 dark:bg-slate-700/60" />
             ))}
           </div>
           <div className="relative flex items-end justify-between gap-1" style={{ height: height - 34 }}>
@@ -172,7 +172,7 @@ export function GroupedBars({
           </div>
           <div className="mt-1.5 flex justify-between gap-1">
             {groups.map((g) => (
-              <span key={g} className="flex-1 text-center text-[10px] text-slate-400">
+              <span key={g} className="flex-1 text-center text-[10px] text-slate-400 dark:text-slate-500">
                 {g}
               </span>
             ))}
@@ -252,7 +252,7 @@ export function RoundProgress({
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} aria-hidden="true">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={stroke} className="dark:opacity-20" />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -265,7 +265,7 @@ export function RoundProgress({
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-700">{label}</span>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-700 dark:text-slate-200">{label}</span>
     </div>
   );
 }
