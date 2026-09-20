@@ -61,7 +61,7 @@ export async function GET(request: Request) {
   ]);
 
   const metrics = hasPeriod
-    ? Object.values((snapshots ?? []).reduce<Record<string, typeof snapshots[number]>>((acc, row) => {
+    ? Object.values((snapshots ?? []).reduce<Record<string, any>>((acc, row) => {
         if (!acc[row.projet]) acc[row.projet] = row;
         return acc;
       }, {}))
