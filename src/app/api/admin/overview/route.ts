@@ -24,7 +24,6 @@ export async function GET() {
     { data: payments, error: paymentsError },
     { data: alerts, error: alertsError },
     { data: snapshots, error: snapshotsError },
-    { data: storedIntelligence, error: intelligenceError },
   ] = await Promise.all([
     admin.from("portfolio_metrics").select("*").order("nom"),
     admin.from("payment_validation_requests")
@@ -40,15 +39,10 @@ export async function GET() {
       .select("projet,nom,mrr,comptes_actifs,statut_sante,captured_at")
       .order("captured_at", { ascending: false })
       .limit(250),
-    admin.from("project_intelligence_items")
-      .select("id,projet,kind,severity,title,message,source,status,metadata,created_at")
-      .eq("status", "open")
-      .order("created_at", { ascending: false })
-      .limit(100),
   ]);
 
-  if (metricsError || paymentsError || alertsError || snapshotsError || intelligenceError) {
-    console.error("[admin overview]", { metricsError, paymentsError, alertsError, snapshotsError, intelligenceError });
+  if (metricsError || paymentsError || alertsError || snapshotsError) {
+    console.error("[admin overview]", { metricsError, paymentsError, alertsError, snapshotsError });
     return NextResponse.json({ error: "Lecture du Control Center impossible." }, { status: 500 });
   }
 
@@ -74,6 +68,6 @@ export async function GET() {
     pendingPayments: payments ?? [],
     alerts: alerts ?? [],
     snapshots: snapshots ?? [],
-    intelligence: [...computedIntelligence, ...(storedIntelligence ?? [])],
+    intelligence: computedIntelligence,
   });
 }
