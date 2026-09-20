@@ -84,7 +84,9 @@ export default function AdminBillingPage() {
           </button>
         </div>
 
-        {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}\n\n        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
+        {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+
+        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
 
         <section className="grid gap-4 md:grid-cols-3">
           <div className="rounded-xl border bg-white p-4"><div className="text-xs text-slate-500">En attente</div><div className="mt-1 text-2xl font-bold">{pending.length}</div></div>
