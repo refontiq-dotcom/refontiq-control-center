@@ -19,21 +19,27 @@ async function requireSuperAdmin() {
   return Boolean(profile?.role === "super_admin" && profile.is_active !== false);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   if (!(await requireSuperAdmin())) {
     return NextResponse.json({ error: "Accès non autorisé." }, { status: 403 });
   }
 
+  const url = new URL(req.url);
+  const from = url.searchParams.get("from");
+  const to = url.searchParams.get("to");
+  if ((from && !to) || (!from && to) || (from && to && from > to)) return NextResponse.json({ error: "Période invalide" }, { status: 400 });
+
   const admin = createAdminClient();
   const today = new Date();
-  const start = new Date(today);
-  start.setUTCDate(start.getUTCDate() - 29);
+  const todayKey = today.toISOString().slice(0, 10);
+  const endKey = to || todayKey;
+  const startDate = new Date(`${from || new Date(today.getTime() - 29 * 86400000).toISOString().slice(0,10)}T00:00:00Z`);
 
   const { data, error } = await admin
     .from("trouvetou_traffic_daily")
     .select("day,visits,unique_visitors")
-    .gte("day", start.toISOString().slice(0, 10))
-    .lte("day", today.toISOString().slice(0, 10))
+    .gte("day", from || startDate.toISOString().slice(0, 10))
+    .lte("day", endKey)
     .order("day", { ascending: true });
 
   if (error) {
@@ -45,14 +51,13 @@ export async function GET() {
   }
 
   const history = data ?? [];
-  const todayKey = today.toISOString().slice(0, 10);
-  const todayRow = history.find((row) => row.day === todayKey);
+  const selectedEndRow = history.find((row) => row.day === endKey) ?? history[history.length - 1];
 
   return NextResponse.json({
     configured: true,
     today: {
-      visits: Number(todayRow?.visits ?? 0),
-      uniqueVisitors: Number(todayRow?.unique_visitors ?? 0),
+      visits: Number(selectedEndRow?.visits ?? 0),
+      uniqueVisitors: Number(selectedEndRow?.unique_visitors ?? 0),
     },
     history7: history.slice(-7).map((row) => ({
       day: row.day,
