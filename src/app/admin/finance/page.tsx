@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
+
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Loader2, RefreshCw, X } from "lucide-react";
@@ -24,12 +26,14 @@ export default function AdminBillingPage() {
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [period, setPeriod] = useState<PeriodRange>(() => getPresetRange("30d"));
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/billing", { cache: "no-store" });
+      const params = new URLSearchParams({ from: period.from, to: period.to });
+      const res = await fetch(`/api/billing?${params.toString()}`, { cache: "no-store" });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error || "Chargement impossible");
       setRequests(body.requests ?? []);
@@ -38,7 +42,7 @@ export default function AdminBillingPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [period.from, period.to]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -80,7 +84,7 @@ export default function AdminBillingPage() {
           </button>
         </div>
 
-        {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}\n\n        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
 
         <section className="grid gap-4 md:grid-cols-3">
           <div className="rounded-xl border bg-white p-4"><div className="text-xs text-slate-500">En attente</div><div className="mt-1 text-2xl font-bold">{pending.length}</div></div>
