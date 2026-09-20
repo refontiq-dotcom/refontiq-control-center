@@ -8,6 +8,18 @@ import { toast } from "sonner";
 
 type Preferences = Record<string, boolean>;
 
+const DEFAULTS: Preferences = {
+  browser_notifications: true,
+  sound_enabled: true,
+  critical_alerts: true,
+  warning_alerts: true,
+  info_alerts: false,
+  payment_alerts: true,
+  sync_alerts: true,
+  traffic_alerts: true,
+  system_alerts: true,
+};
+
 const rows = [
   ["browser_notifications","Notifications navigateur","Recevoir les alertes même lorsque le Control Center est en arrière-plan.",Bell],
   ["sound_enabled","Son des alertes","Jouer un signal sonore pour les alertes autorisées.",Volume2],
@@ -21,7 +33,7 @@ const rows = [
 ] as const;
 
 export default function NotificationSettingsPage() {
-  const [prefs,setPrefs]=useState<Preferences>({});
+  const [prefs,setPrefs]=useState<Preferences>(DEFAULTS);
   const [loading,setLoading]=useState(true);
   const [saving,setSaving]=useState(false);
 
@@ -46,6 +58,6 @@ export default function NotificationSettingsPage() {
         <button type="button" role="switch" aria-checked={!!prefs[key]} onClick={()=>toggle(key)} className={"relative h-6 w-11 shrink-0 rounded-full transition "+(prefs[key]?"bg-slate-950":"bg-slate-200")}><span className={"absolute top-1 h-4 w-4 rounded-full bg-white shadow transition "+(prefs[key]?"left-6":"left-1")}/></button>
       </div>)}
     </Card>
-    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end"><Button variant="outline" onClick={()=>window.location.reload()} className="gap-2"><RotateCcw className="h-4 w-4"/>Réinitialiser l'affichage</Button><Button onClick={()=>void save()} disabled={saving} className="gap-2"><Save className="h-4 w-4"/>{saving?"Enregistrement…":"Enregistrer"}</Button></div>
+    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end"><Button variant="outline" onClick={()=>setPrefs(DEFAULTS)} className="gap-2"><RotateCcw className="h-4 w-4"/>Réinitialiser</Button><Button onClick={()=>void save()} disabled={saving} className="gap-2"><Save className="h-4 w-4"/>{saving?"Enregistrement…":"Enregistrer"}</Button></div>
   </main>;
 }
