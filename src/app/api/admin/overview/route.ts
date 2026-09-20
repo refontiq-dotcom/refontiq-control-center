@@ -90,7 +90,7 @@ export async function GET(request: Request) {
   );
 
   return NextResponse.json({
-    metrics: normalizedMetrics,
+    metrics: periodMetrics,
     pendingPayments: (payments ?? []).filter((payment) => payment.status === "pending"),
     alerts: alerts ?? [],
     snapshots: snapshots ?? [],
