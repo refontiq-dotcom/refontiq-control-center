@@ -24,6 +24,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatFCFA } from "@/lib/utils";
 import { REFONTIQ_PROJECTS, type RefontiqProject } from "@/lib/projects";
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
+import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
 
 type Health = "healthy" | "warning" | "critical" | "unknown";
 
@@ -93,6 +94,7 @@ export default function ProjectCockpitPage() {
   const [intelligence, setIntelligence] = useState<IntelligenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [period, setPeriod] = useState<PeriodRange>(() => getPresetRange("30d"));
 
   const load = useCallback(async () => {
     if (!project) return;
@@ -105,7 +107,8 @@ export default function ProjectCockpitPage() {
         return;
       }
 
-      const response = await fetch("/api/admin/overview", { cache: "no-store" });
+      const params = new URLSearchParams({ from: period.from, to: period.to });
+      const response = await fetch(`/api/admin/overview?${params.toString()}`, { cache: "no-store" });
       if (response.status === 401 || response.status === 403) {
         window.location.href = ADMIN_LOGIN_ROUTE;
         return;
@@ -126,7 +129,7 @@ export default function ProjectCockpitPage() {
     } finally {
       setLoading(false);
     }
-  }, [project]);
+  }, [project, period.from, period.to]);
 
   useEffect(() => {
     void load();
@@ -178,7 +181,7 @@ export default function ProjectCockpitPage() {
           </div>
         </div>
 
-        {error && <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</Card>}
+        {error && <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</Card>}\n\n        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="border-slate-200 p-4">
