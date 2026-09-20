@@ -295,7 +295,7 @@ export default function SuperAdminHubPage() {
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Link href="/admin/finance" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CreditCard className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">{pendingPayments.length}</div><div className="text-[10px] text-slate-400">Paiements</div></Link>
               <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CheckCircle2 className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Suivi</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
-              <Link href="/admin/trouvetou-traffic" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><TrendingUp className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Trafic</div><div className="text-[10px] text-slate-400">Trouvetou</div></Link>
+              <Link href="/admin/trouvetou-traffic" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><TrendingUp className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Trafic publicité</div><div className="text-[10px] text-slate-400">Publicité</div></Link>
               <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><Zap className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">État</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
             </div>
           </div>
@@ -339,7 +339,7 @@ export default function SuperAdminHubPage() {
             <div className="mt-4 grid gap-2">
               <Link href="/admin/finance" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><CreditCard className="h-4 w-4" /> Paiements centraux</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
               <Link href="/admin/integration-checklist" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Checklist projets</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
-              <Link href="/admin/trouvetou-traffic" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Trafic Trouvetou</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
+              <Link href="/admin/trouvetou-traffic" className="flex items-center justify-between rounded-xl border p-3 text-sm hover:bg-slate-50"><span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Trafic publicité</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
               <div className="flex items-center justify-between rounded-xl border p-3 text-sm text-slate-500"><span className="flex items-center gap-2"><Bell className="h-4 w-4" /> Alertes externes</span><span className="text-[10px]">Telegram suspendu</span></div>
             </div>
           </Card>
