@@ -115,7 +115,8 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
   const stale = syncAgeMinutes(metric?.derniere_synchro) > 30;
 
   return (
-    <Card className="group overflow-hidden border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
+    <Link href={`/admin/projects/${project.id}`} className="block">
+      <Card className="group overflow-hidden border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="h-1" style={{ backgroundColor: project.accent }} />
       <div className="p-5">
         <div className="flex items-start justify-between gap-3">
@@ -161,7 +162,8 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
           </a>
         </div>
       </div>
-    </Card>
+      </Card>
+    </Link>
   );
 }
 
@@ -341,7 +343,7 @@ export default function SuperAdminHubPage() {
 
         <section>
           <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div><h2 className="text-lg font-semibold">Tous les projets</h2><p className="mt-1 text-xs text-slate-500">Vue uniforme, avec état, santé, activité et accès rapide.</p></div>
+            <div><h2 className="text-lg font-semibold">Projets</h2><p className="mt-1 text-xs text-slate-500">Cliquez sur un projet pour ouvrir son cockpit complet et isolé.</p></div>
             <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un projet…" className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-slate-400 sm:w-56" /></div>
               <select value={healthFilter} onChange={(e) => setHealthFilter(e.target.value as typeof healthFilter)} className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none">
