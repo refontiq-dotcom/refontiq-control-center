@@ -16,6 +16,7 @@ import {
   Stethoscope,
   TrendingUp,
   Activity,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -41,6 +42,7 @@ const financeItems = [
 ];
 
 const adminItems = [
+  { href: "/admin/settings/notifications", label: "Notifications", icon: Bell },
   { href: "/admin/integration-checklist", label: "Intégration des projets", icon: Network },
   { href: "/admin/trouvetou-traffic", label: "Trafic Trouvetou", icon: TrendingUp },
 ];
