@@ -24,6 +24,9 @@ import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 
 const globalItems = [
   { href: "/admin/dashboard", label: "Ensemble", icon: LayoutDashboard },
+];
+
+const supervisionItems = [
   { href: "/admin/supervision", label: "Supervision", icon: Activity },
 ];
 
@@ -77,13 +80,18 @@ export function AdminSidebar() {
 
       <nav className="flex-1 space-y-5 overflow-y-auto p-3" aria-label="Navigation Super Admin">
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Pilotage</div>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Vue globale</div>
           <div className="space-y-1">{globalItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Mes projets</div>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Projets</div>
           <div className="space-y-1">{projectItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
+        </section>
+
+        <section>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Supervision</div>
+          <div className="space-y-1">{supervisionItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
@@ -116,6 +124,7 @@ export function AdminMobileNav() {
       <div className="flex gap-1 overflow-x-auto px-3 py-2">
         {globalItems.map((item) => <NavLink key={item.href} {...item} />)}
         {projectItems.map((item) => <NavLink key={item.href} {...item} />)}
+        {supervisionItems.map((item) => <NavLink key={item.href} {...item} />)}
         {financeItems.map((item) => <NavLink key={item.href} {...item} />)}
         {adminItems.map((item) => <NavLink key={item.href} {...item} />)}
       </div>
