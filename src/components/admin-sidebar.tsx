@@ -4,27 +4,57 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  BedDouble,
+  Building2,
   CreditCard,
+  GraduationCap,
   LayoutDashboard,
   LogOut,
   Network,
   ShieldCheck,
+  Stethoscope,
   TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 
-const items = [
-  { href: "/admin/dashboard", label: "Vue d'ensemble", icon: LayoutDashboard },
+const globalItems = [
+  { href: "/admin/dashboard", label: "Ensemble", icon: LayoutDashboard },
+];
+
+const projectItems = [
+  { href: "/admin/projects/sejoura", label: "Séjoura", icon: Building2 },
+  { href: "/admin/projects/schooly", label: "Schooly", icon: GraduationCap },
+  { href: "/admin/projects/trouvetou", label: "Trouvetou", icon: BedDouble },
+  { href: "/admin/projects/docly", label: "Docly", icon: Stethoscope },
+];
+
+const adminItems = [
   { href: "/admin/billing", label: "Paiements centraux", icon: CreditCard },
   { href: "/admin/integration-checklist", label: "Intégration des projets", icon: Network },
   { href: "/admin/trouvetou-traffic", label: "Trafic Trouvetou", icon: TrendingUp },
 ];
 
-export function AdminSidebar() {
+function NavLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ComponentType<{ className?: string }> }) {
   const pathname = usePathname();
+  const active = pathname === href || pathname.startsWith(href + "/");
 
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
+        active ? "bg-slate-950 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+      )}
+    >
+      <Icon className="h-4 w-4 shrink-0" />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+export function AdminSidebar() {
   async function logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -43,26 +73,25 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 p-3" aria-label="Navigation Super Admin">
-        {items.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-                active
-                  ? "bg-slate-950 text-white shadow-sm"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 space-y-5 overflow-y-auto p-3" aria-label="Navigation Super Admin">
+        <section>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Pilotage</div>
+          <NavLink {...globalItems[0]} />
+        </section>
+
+        <section>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Mes projets</div>
+          <div className="space-y-1">
+            {projectItems.map((item) => <NavLink key={item.href} {...item} />)}
+          </div>
+        </section>
+
+        <section>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Administration</div>
+          <div className="space-y-1">
+            {adminItems.map((item) => <NavLink key={item.href} {...item} />)}
+          </div>
+        </section>
       </nav>
 
       <div className="border-t border-slate-200 p-3">
@@ -71,9 +100,7 @@ export function AdminSidebar() {
             <BarChart3 className="h-4 w-4" />
             Super Admin central
           </div>
-          <p className="mt-1 text-[10px] leading-4 text-slate-500">
-            Un seul centre de pilotage pour tout l'écosystème Refontiq.
-          </p>
+          <p className="mt-1 text-[10px] leading-4 text-slate-500">Un seul centre de pilotage pour tout l'écosystème Refontiq.</p>
         </div>
         <button
           type="button"
@@ -89,28 +116,12 @@ export function AdminSidebar() {
 }
 
 export function AdminMobileNav() {
-  const pathname = usePathname();
-
   return (
     <div className="border-b border-slate-200 bg-white lg:hidden">
       <div className="flex gap-1 overflow-x-auto px-3 py-2">
-        {items.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium",
-                active ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-100"
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {item.label}
-            </Link>
-          );
-        })}
+        <NavLink {...globalItems[0]} />
+        {projectItems.map((item) => <NavLink key={item.href} {...item} />)}
+        {adminItems.map((item) => <NavLink key={item.href} {...item} />)}
       </div>
     </div>
   );
