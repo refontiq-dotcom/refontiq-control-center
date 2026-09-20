@@ -25,13 +25,13 @@ export default function NotificationSettingsPage() {
   const [loading,setLoading]=useState(true);
   const [saving,setSaving]=useState(false);
 
-  useEffect(()=>{fetch("/api/notification-preferences",{cache:"no-store"}).then(r=>r.json()).then(b=>setPrefs(b.preferences||{})).finally(()=>setLoading(false));},[]);
+  useEffect(()=>{fetch("/api/admin/notification-settings",{cache:"no-store"}).then(r=>r.json()).then(b=>setPrefs(b.preferences||{})).finally(()=>setLoading(false));},[]);
 
   function toggle(key:string){setPrefs(p=>({...p,[key]:!p[key]}));}
   async function save(){
     setSaving(true);
     try {
-      const r=await fetch("/api/notification-preferences",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(prefs)});
+      const r=await fetch("/api/admin/notification-settings",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(prefs)});
       if(!r.ok) throw new Error();
       const b=await r.json(); setPrefs(b.preferences); toast.success("Réglages des notifications enregistrés.");
     } catch { toast.error("Impossible d'enregistrer les réglages."); }
