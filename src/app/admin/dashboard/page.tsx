@@ -299,7 +299,9 @@ export default function SuperAdminHubPage() {
           </div>
         </section>
 
-        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />\n\n        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
+
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Building2 className="h-4 w-4" /> Produits suivis</div><div className="mt-2 text-2xl font-bold">{REFONTIQ_PROJECTS.filter(p => p.status === "active").length}</div><div className="mt-1 text-[11px] text-slate-500">projets actifs suivis</div></Card>
           <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Users className="h-4 w-4" /> Comptes actifs</div><div className="mt-2 text-2xl font-bold">{activeAccounts.toLocaleString("fr-FR")}</div><div className="mt-1 text-[11px] text-slate-500">sur la période sélectionnée</div></Card>
           <Card className="border-slate-200 p-4"><div className="flex items-center gap-2 text-xs text-slate-500"><Wallet className="h-4 w-4" /> MRR consolidé</div><div className="mt-2 text-2xl font-bold">{formatFCFA(mrr)}</div><div className="mt-1 text-[11px] text-slate-500">données reçues</div></Card>
