@@ -135,7 +135,7 @@ export default function IntelligencePage() {
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="rounded-lg bg-slate-50 p-3">
                       <div className="text-[10px] uppercase tracking-wide text-slate-400">Comptes</div>
-                      <div className="mt-1 flex items-center gap-1 text-sm font-semibold">{accountsDelta !== null && accountsDelta >= 0 ? <TrendingUp className="h-4 w-4 text-emerald-600" /> : <TrendingDown className="h-4 w-4 text-amber-600" />}{accountsDelta ?? 0 > 0 ? "+" : ""}{accountsDelta}</div>
+                      <div className="mt-1 flex items-center gap-1 text-sm font-semibold">{accountsDelta !== null && accountsDelta >= 0 ? <TrendingUp className="h-4 w-4 text-emerald-600" /> : <TrendingDown className="h-4 w-4 text-amber-600" />}{accountsDelta !== null && accountsDelta > 0 ? "+" : ""}{accountsDelta}</div>
                     </div>
                     <div className="rounded-lg bg-slate-50 p-3">
                       <div className="text-[10px] uppercase tracking-wide text-slate-400">MRR</div>
