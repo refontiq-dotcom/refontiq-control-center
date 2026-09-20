@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Stethoscope,
   TrendingUp,
+  Activity,
   Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,7 +24,7 @@ import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 
 const globalItems = [
   { href: "/admin/dashboard", label: "Ensemble", icon: LayoutDashboard },
-  { href: "/admin/intelligence", label: "Intelligence", icon: Bot },
+  { href: "/admin/supervision", label: "Supervision", icon: Activity },
 ];
 
 const projectItems = [
@@ -33,8 +34,11 @@ const projectItems = [
   { href: "/admin/projects/docly", label: "Docly", icon: Stethoscope },
 ];
 
+const financeItems = [
+  { href: "/admin/finance", label: "Finance & paiements", icon: CreditCard },
+];
+
 const adminItems = [
-  { href: "/admin/billing", label: "Paiements centraux", icon: CreditCard },
   { href: "/admin/integration-checklist", label: "Intégration des projets", icon: Network },
   { href: "/admin/trouvetou-traffic", label: "Trafic Trouvetou", icon: TrendingUp },
 ];
@@ -83,6 +87,11 @@ export function AdminSidebar() {
         </section>
 
         <section>
+          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Finance</div>
+          <div className="space-y-1">{financeItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
+        </section>
+
+        <section>
           <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Administration</div>
           <div className="space-y-1">{adminItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
@@ -107,6 +116,7 @@ export function AdminMobileNav() {
       <div className="flex gap-1 overflow-x-auto px-3 py-2">
         {globalItems.map((item) => <NavLink key={item.href} {...item} />)}
         {projectItems.map((item) => <NavLink key={item.href} {...item} />)}
+        {financeItems.map((item) => <NavLink key={item.href} {...item} />)}
         {adminItems.map((item) => <NavLink key={item.href} {...item} />)}
       </div>
     </div>
