@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { sendWebPushToAll } from "@/lib/web-push";
 
 const SHARED_SECRET = process.env.METRICS_PUSH_SECRET;
 
@@ -76,14 +77,18 @@ export async function POST(req: Request) {
       }
     }
 
+    const notificationTitle = `Paiement ${request.produit} ${action === "validate" ? "validé" : "rejeté"}`;
+    const notificationMessage = `Demande ${request.id} — référence produit ${request.produit_ref}`;
     await admin.from("telegram_alerts").insert({
       level: action === "validate" ? "success" : "warning",
       type: "billing",
-      title: `Paiement ${request.produit} ${action === "validate" ? "validé" : "rejeté"}`,
-      message: `Demande ${request.id} — référence produit ${request.produit_ref}`,
+      title: notificationTitle,
+      message: notificationMessage,
       sent_at: new Date().toISOString(),
       status: "sent",
     });
+
+    void sendWebPushToAll({ title: notificationTitle, message: notificationMessage, level: action === "validate" ? "info" : "warning", href: "/admin/finance", tag: `billing:${request.id}` }).catch((pushError) => console.error("[web-push billing]", pushError));
 
     return NextResponse.json({ success: true, action, data: request });
   } catch (error) {
