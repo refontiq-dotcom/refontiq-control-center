@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   ArrowRight,
   Bell,
-  Bot,
   Building2,
   CheckCircle2,
   ChevronRight,
@@ -285,11 +284,11 @@ export default function SuperAdminHubPage() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="flex items-center gap-2 text-xs font-medium text-slate-300"><Activity className="h-4 w-4" /> CENTRE DE PILOTAGE</div>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">Vue intelligente de Refontiq</h1>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">Vue globale de Refontiq</h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-300">Une seule console pour surveiller les produits, détecter les situations à traiter, centraliser les paiements et suivre l'intégration.</p>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Link href="/admin/billing" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CreditCard className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">{pendingPayments.length}</div><div className="text-[10px] text-slate-400">Paiements</div></Link>
+              <Link href="/admin/finance" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CreditCard className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">{pendingPayments.length}</div><div className="text-[10px] text-slate-400">Paiements</div></Link>
               <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><CheckCircle2 className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Suivi</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
               <Link href="/admin/trouvetou-traffic" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><TrendingUp className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">Trafic</div><div className="text-[10px] text-slate-400">Trouvetou</div></Link>
               <Link href="/admin/integration-checklist" className="rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"><Zap className="h-4 w-4 text-slate-300" /><div className="mt-2 text-lg font-semibold">État</div><div className="text-[10px] text-slate-400">Intégration</div></Link>
@@ -307,8 +306,8 @@ export default function SuperAdminHubPage() {
         <section className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr]">
           <Card className="border-slate-200 p-5">
             <div className="flex items-center justify-between gap-3">
-              <div><h2 className="font-semibold">Intelligence opérationnelle</h2><p className="mt-1 text-xs text-slate-500">Priorités calculées à partir des données réellement reçues.</p></div>
-              <Bot className="h-5 w-5 text-slate-400" />
+              <div><h2 className="font-semibold">Supervision opérationnelle</h2><p className="mt-1 text-xs text-slate-500">Priorités calculées à partir des données réellement reçues.</p></div>
+              <Activity className="h-5 w-5 text-slate-400" />
             </div>
             <div className="mt-4 space-y-2">
               {insights.map((item, index) => {
