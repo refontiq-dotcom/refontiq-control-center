@@ -16,6 +16,7 @@ import {
   Stethoscope,
   TrendingUp,
   Bot,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -24,6 +25,7 @@ import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 const globalItems = [
   { href: "/admin/dashboard", label: "Ensemble", icon: LayoutDashboard },
   { href: "/admin/intelligence", label: "Intelligence", icon: Bot },
+  { href: "/admin/assistant", label: "Copilote IA", icon: Sparkles },
 ];
 
 const projectItems = [
