@@ -16,12 +16,6 @@ function categoryForAlert(type: string | null) {
   return "system_alerts";
 }
 
-function levelEnabled(level: string, prefs: typeof defaults) {
-  if (level === "critical") return prefs.critical_alerts;
-  if (level === "warning") return prefs.warning_alerts;
-  return prefs.info_alerts;
-}
-
 export async function GET() {
   try {
     const supabase = await createClient();
