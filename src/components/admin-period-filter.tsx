@@ -66,31 +66,57 @@ export function AdminPeriodFilter({
     onChange(getPresetRange(preset));
   }
 
+  const presets: Array<{ key: "today" | "7d" | "30d" | "month" | "previous-month"; label: string }> = [
+    { key: "today", label: "Aujourd'hui" },
+    { key: "7d", label: "7 jours" },
+    { key: "30d", label: "30 jours" },
+    { key: "month", label: "Ce mois" },
+    { key: "previous-month", label: "Mois précédent" },
+  ];
+  const isActivePreset = (key: (typeof presets)[number]["key"]) => {
+    const preset = getPresetRange(key);
+    return preset.from === value.from && preset.to === value.to;
+  };
+
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+    <div className="soft-card rounded-3xl border border-white/70 bg-white/80 p-3 backdrop-blur">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 text-slate-500" />
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600">
+            <CalendarDays className="h-4 w-4" />
+          </span>
           <div>
-            <div className="text-xs font-semibold text-slate-900">Période d'analyse</div>
+            <div className="text-xs font-semibold text-slate-900">Période d&apos;analyse</div>
             <div className="text-[11px] text-slate-500">{label}</div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button type="button" onClick={() => setPreset("today")} className="rounded-lg border px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50">Aujourd'hui</button>
-          <button type="button" onClick={() => setPreset("7d")} className="rounded-lg border px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50">7 jours</button>
-          <button type="button" onClick={() => setPreset("30d")} className="rounded-lg border px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50">30 jours</button>
-          <button type="button" onClick={() => setPreset("month")} className="rounded-lg border px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50">Ce mois</button>
-          <button type="button" onClick={() => setPreset("previous-month")} className="rounded-lg border px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50">Mois précédent</button>
-          <label className="flex items-center gap-1.5 rounded-lg border bg-slate-50 px-2 py-1">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {presets.map((preset) => {
+            const active = isActivePreset(preset.key);
+            return (
+              <button
+                key={preset.key}
+                type="button"
+                onClick={() => setPreset(preset.key)}
+                className={
+                  active
+                    ? "rounded-full bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-blue-600/25"
+                    : "rounded-full bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-slate-900"
+                }
+              >
+                {preset.label}
+              </button>
+            );
+          })}
+          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200">
             <span className="text-[10px] text-slate-500">Du</span>
             <input type="date" value={value.from} max={value.to || undefined} onChange={(e) => onChange({ ...value, from: e.target.value })} className="bg-transparent text-xs outline-none" aria-label="Date de début" />
           </label>
-          <label className="flex items-center gap-1.5 rounded-lg border bg-slate-50 px-2 py-1">
+          <label className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 ring-1 ring-slate-200">
             <span className="text-[10px] text-slate-500">au</span>
             <input type="date" value={value.to} min={value.from || undefined} onChange={(e) => onChange({ ...value, to: e.target.value })} className="bg-transparent text-xs outline-none" aria-label="Date de fin" />
           </label>
-          {onReset && <button type="button" onClick={onReset} className="text-xs font-medium text-slate-500 underline hover:text-slate-900">Réinitialiser</button>}
+          {onReset && <button type="button" onClick={onReset} className="rounded-full px-2.5 py-1.5 text-xs font-medium text-slate-500 underline-offset-2 hover:text-slate-900 hover:underline">Réinitialiser</button>}
         </div>
       </div>
     </div>

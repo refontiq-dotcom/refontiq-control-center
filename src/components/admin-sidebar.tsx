@@ -55,12 +55,14 @@ function NavLink({ href, label, icon: Icon }: { href: string; label: string; ico
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-        active ? "bg-slate-950 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+        "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium transition",
+        active
+          ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
+          : "text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-sm"
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
-      <span>{label}</span>
+      <span className="truncate">{label}</span>
     </Link>
   );
 }
@@ -73,45 +75,58 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:min-h-screen lg:flex-col">
-      <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white"><ShieldCheck className="h-5 w-5" /></div>
-        <div className="min-w-0"><div className="truncate text-sm font-semibold text-slate-950">Refontiq</div><div className="truncate text-[10px] uppercase tracking-wider text-slate-400">Control Center</div></div>
+    <aside className="hidden w-64 shrink-0 lg:flex lg:min-h-screen lg:flex-col">
+      <div className="flex h-16 items-center gap-3 px-5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30">
+          <ShieldCheck className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <div className="truncate text-sm font-bold tracking-tight text-slate-900">Refontiq</div>
+          <div className="truncate text-[10px] font-medium uppercase tracking-widest text-blue-600/70">Control Center</div>
+        </div>
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto p-3" aria-label="Navigation Super Admin">
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-2" aria-label="Navigation Super Admin">
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Vue globale</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Vue globale</div>
           <div className="space-y-1">{globalItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Projets</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Projets</div>
           <div className="space-y-1">{projectItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Supervision</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Supervision</div>
           <div className="space-y-1">{supervisionItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Finance</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Finance</div>
           <div className="space-y-1">{financeItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Administration</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Administration</div>
           <div className="space-y-1">{adminItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
       </nav>
 
-      <div className="border-t border-slate-200 p-3">
-        <div className="mb-3 rounded-xl bg-slate-50 p-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-700"><BarChart3 className="h-4 w-4" /> Super Admin central</div>
-          <p className="mt-1 text-[10px] leading-4 text-slate-500">Un seul centre de pilotage pour tout l'écosystème Refontiq.</p>
+      <div className="p-3">
+        <div className="rounded-2xl border border-blue-100/70 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 soft-chip">
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+            <BarChart3 className="h-4 w-4 text-blue-600" /> Super Admin central
+          </div>
+          <p className="mt-1.5 text-[10px] leading-4 text-slate-500">
+            Un seul centre de pilotage pour tout l&apos;écosystème Refontiq.
+          </p>
         </div>
-        <button type="button" onClick={() => void logout()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950">
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="mt-2 flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900 hover:shadow-sm"
+        >
           <LogOut className="h-4 w-4" /> Déconnexion
         </button>
       </div>
@@ -121,8 +136,14 @@ export function AdminSidebar() {
 
 export function AdminMobileNav() {
   return (
-    <div className="border-b border-slate-200 bg-white lg:hidden">
-      <div className="flex gap-1 overflow-x-auto px-3 py-2">
+    <div className="border-b border-white/60 bg-white/60 backdrop-blur lg:hidden">
+      <div className="flex items-center gap-2 px-4 py-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-md shadow-blue-600/30">
+          <ShieldCheck className="h-4 w-4" />
+        </div>
+        <span className="text-sm font-bold tracking-tight text-slate-900">Refontiq Control Center</span>
+      </div>
+      <div className="flex gap-1 overflow-x-auto px-3 pb-2">
         {globalItems.map((item) => <NavLink key={item.href} {...item} />)}
         {projectItems.map((item) => <NavLink key={item.href} {...item} />)}
         {supervisionItems.map((item) => <NavLink key={item.href} {...item} />)}

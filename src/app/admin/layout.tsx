@@ -3,7 +3,7 @@ import { AdminMobileNav, AdminSidebar } from "@/components/admin-sidebar";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="soft-canvas min-h-screen">
       <div className="flex min-h-screen">
         <AdminSidebar />
         <div className="min-w-0 flex-1">
