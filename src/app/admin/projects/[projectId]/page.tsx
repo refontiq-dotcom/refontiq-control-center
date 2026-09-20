@@ -34,6 +34,7 @@ interface PortfolioMetric {
   comptes_actifs: number;
   statut_sante: Health;
   derniere_synchro: string;
+  details?: Record<string, number | string | boolean>;
 }
 
 interface PaymentRequest {
@@ -186,6 +187,20 @@ export default function ProjectCockpitPage() {
             <div className="mt-1 text-[11px] text-slate-500">{stale ? "Donnée à vérifier" : "donnée récente"}</div>
           </Card>
         </section>
+
+        {metric?.details && Object.keys(metric.details).length > 0 && (
+          <Card className="border-slate-200 p-5">
+            <div className="flex items-center gap-2"><Activity className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Indicateurs propres à {project.name}</h2><p className="mt-1 text-xs text-slate-500">Données remontées directement par le projet lors de sa dernière synchronisation.</p></div></div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {Object.entries(metric.details).map(([key, value]) => (
+                <div key={key} className="rounded-xl bg-slate-50 p-3">
+                  <div className="text-[10px] uppercase tracking-wide text-slate-400">{key.replaceAll("_", " ")}</div>
+                  <div className="mt-1 text-lg font-semibold text-slate-900">{typeof value === "number" ? value.toLocaleString("fr-FR") : String(value)}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         <section className="grid gap-4 lg:grid-cols-2">
           <Card className="border-slate-200 p-5">
