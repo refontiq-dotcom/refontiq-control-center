@@ -206,7 +206,7 @@ export default function SuperAdminHubPage() {
       setLoading(false);
       setMetricsStatus((current) => current === "erreur" ? "erreur" : "synchronisation");
     }
-  }, []);
+  }, [period.from, period.to]);
 
   useEffect(() => {
     void loadData();
@@ -240,7 +240,7 @@ export default function SuperAdminHubPage() {
     const items: Array<{ tone: "critical" | "warning" | "info" | "success"; title: string; text: string; href?: string }> = [];
     if (criticalProjects.length) items.push({ tone: "critical", title: "Action prioritaire", text: `${criticalProjects.length} projet(s) signalent un état critique.`, href: "/admin/integration-checklist" });
     if (staleProjects.length) items.push({ tone: "warning", title: "Synchronisation à vérifier", text: `${staleProjects.length} projet(s) n'ont pas synchronisé leurs métriques depuis plus de 30 minutes.` });
-    if (pendingPayments.length) items.push({ tone: "warning", title: "Validation financière", text: `${pendingPayments.length} paiement(s) attendent une décision pour ${formatFCFA(pendingAmount)}.`, href: "/admin/billing" });
+    if (pendingPayments.length) items.push({ tone: "warning", title: "Validation financière", text: `${pendingPayments.length} paiement(s) attendent une décision pour ${formatFCFA(pendingAmount)}.`, href: "/admin/finance" });
     if (!criticalProjects.length && !warningProjects.length && !staleProjects.length && !pendingPayments.length) {
       items.push({ tone: "success", title: "Centre opérationnel", text: "Aucune anomalie prioritaire détectée dans les données reçues." });
     }
