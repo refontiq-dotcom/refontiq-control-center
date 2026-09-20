@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Eye, Users, RefreshCw, BarChart3 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
 
 type Row = { day: string; visits: number; uniqueVisitors: number };
 
@@ -62,12 +63,13 @@ export default function TrouvetouTrafficPage() {
   const [data, setData] = useState<TrafficResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [period, setPeriod] = useState<PeriodRange>(() => getPresetRange("30d"));
 
   async function load() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/trouvetou-traffic", { cache: "no-store" });
+      const response = await fetch(`/api/admin/trouvetou-traffic?from=${period.from}&to=${period.to}`, { cache: "no-store" });
       if (response.status === 401 || response.status === 403) {
         window.location.href = "/admin";
         return;
@@ -84,7 +86,7 @@ export default function TrouvetouTrafficPage() {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [period.from, period.to]);
 
   const history7 = data?.history7 ?? [];
   const history30 = data?.history30 ?? [];
@@ -116,6 +118,8 @@ export default function TrouvetouTrafficPage() {
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         {error && <Card className="p-4 text-sm text-red-600">{error}</Card>}
 
+        <AdminPeriodFilter value={period} onChange={setPeriod} onReset={() => setPeriod(getPresetRange("30d"))} />
+
         {!data?.configured && !loading && (
           <Card className="p-5">
             <p className="font-medium text-slate-800">Collecte du trafic en attente</p>
@@ -128,7 +132,7 @@ export default function TrouvetouTrafficPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="p-5">
             <div className="flex items-center gap-2 text-slate-500 text-sm">
-              <Eye className="w-4 h-4" /> Visites aujourd'hui
+              <Eye className="w-4 h-4" /> Visites en fin de période
             </div>
             <div className="text-3xl font-bold mt-2 text-slate-900">
               {formatNumber(data?.today?.visits ?? 0)}
@@ -136,7 +140,7 @@ export default function TrouvetouTrafficPage() {
           </Card>
           <Card className="p-5">
             <div className="flex items-center gap-2 text-slate-500 text-sm">
-              <Users className="w-4 h-4" /> Visiteurs uniques
+              <Users className="w-4 h-4" /> Visiteurs uniques en fin de période
             </div>
             <div className="text-3xl font-bold mt-2 text-slate-900">
               {formatNumber(data?.today?.uniqueVisitors ?? 0)}
@@ -144,7 +148,7 @@ export default function TrouvetouTrafficPage() {
           </Card>
           <Card className="p-5">
             <div className="flex items-center gap-2 text-slate-500 text-sm">
-              <BarChart3 className="w-4 h-4" /> Visites sur 30 jours
+              <BarChart3 className="w-4 h-4" /> Visites sur la période
             </div>
             <div className="text-3xl font-bold mt-2 text-slate-900">
               {formatNumber(total30)}
@@ -168,7 +172,7 @@ export default function TrouvetouTrafficPage() {
 
         <Card className="p-5">
           <div className="mb-5">
-            <h2 className="font-semibold text-slate-900">Historique — 30 jours</h2>
+            <h2 className="font-semibold text-slate-900">Historique — période sélectionnée</h2>
             <p className="text-xs text-slate-500 mt-1">Vue complète du trafic quotidien</p>
           </div>
           {history30.length ? (
