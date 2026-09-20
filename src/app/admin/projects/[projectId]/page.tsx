@@ -52,6 +52,15 @@ interface Alert {
   message: string;
   created_at: string;
 }
+interface IntelligenceItem {
+  id: string;
+  projet: string;
+  kind: string;
+  severity: "info" | "warning" | "critical";
+  title: string;
+  message: string;
+  source: string;
+}
 
 function healthMeta(health: Health) {
   return {
@@ -81,6 +90,7 @@ export default function ProjectCockpitPage() {
   const [metric, setMetric] = useState<PortfolioMetric | null>(null);
   const [payments, setPayments] = useState<PaymentRequest[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [intelligence, setIntelligence] = useState<IntelligenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,7 +115,12 @@ export default function ProjectCockpitPage() {
 
       setMetric((body.metrics ?? []).find((item: PortfolioMetric) => item.projet === project.id) ?? null);
       setPayments((body.pendingPayments ?? []).filter((item: PaymentRequest) => item.produit === project.id));
-      setAlerts((body.alerts ?? []).filter((item: Alert) => item.type?.toLowerCase().includes(project.id)));
+      const projectTerms = [project.id, project.name.toLowerCase()];
+      setAlerts((body.alerts ?? []).filter((item: Alert) => {
+        const text = [item.type, item.message].filter(Boolean).join(" ").toLowerCase();
+        return projectTerms.some((term) => text.includes(term.toLowerCase()));
+      }));
+      setIntelligence((body.intelligence ?? []).filter((item: IntelligenceItem) => item.projet === project.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Impossible de charger le projet.");
     } finally {
@@ -225,6 +240,19 @@ export default function ProjectCockpitPage() {
             </div>
           </Card>
         </section>
+
+        <Card className="border-slate-200 p-5">
+          <div className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Intelligence du projet</h2><p className="mt-1 text-xs text-slate-500">Signaux calculés à partir des données réelles du projet.</p></div></div>
+          <div className="mt-4 space-y-2">
+            {intelligence.length ? intelligence.map((item) => (
+              <div key={item.id} className={`rounded-xl border p-3 ${item.severity === "critical" ? "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}`}>
+                <div className="text-sm font-semibold">{item.title}</div>
+                <div className="mt-1 text-sm text-slate-700">{item.message}</div>
+                <div className="mt-2 text-[10px] uppercase tracking-wide text-slate-400">Source : {item.source}</div>
+              </div>
+            )) : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-slate-500">Aucun signal intelligent actif pour ce projet.</div>}
+          </div>
+        </Card>
 
         <section className="grid gap-4 lg:grid-cols-2">
           <Card className="border-slate-200 p-5">
