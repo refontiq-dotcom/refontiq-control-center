@@ -158,7 +158,7 @@ export default function IntegrationChecklistPage() {
 
   return (
     <div>
-      <header className="border-b bg-white">
+      <header className="border-b border-sky-200/60 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6" />

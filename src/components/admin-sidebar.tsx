@@ -58,7 +58,7 @@ function NavLink({ href, label, icon: Icon }: { href: string; label: string; ico
         "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium transition",
         active
           ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-600/25"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+          : "text-sky-900/70 hover:bg-white/70 hover:text-slate-900"
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
@@ -75,7 +75,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-100 bg-white lg:flex lg:h-full lg:flex-col">
+    <aside className="hidden w-64 shrink-0 border-r border-sky-200/70 bg-sky-100 lg:flex lg:h-full lg:flex-col">
       <div className="flex h-16 items-center gap-3 px-5">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30">
           <ShieldCheck className="h-5 w-5" />
@@ -88,33 +88,33 @@ export function AdminSidebar() {
 
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-2" aria-label="Navigation Super Admin">
         <section>
-          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Vue globale</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-sky-900/50">Vue globale</div>
           <div className="space-y-1">{globalItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Projets</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-sky-900/50">Projets</div>
           <div className="space-y-1">{projectItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Supervision</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-sky-900/50">Supervision</div>
           <div className="space-y-1">{supervisionItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Finance</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-sky-900/50">Finance</div>
           <div className="space-y-1">{financeItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
 
         <section>
-          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Administration</div>
+          <div className="px-3.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-sky-900/50">Administration</div>
           <div className="space-y-1">{adminItems.map((item) => <NavLink key={item.href} {...item} />)}</div>
         </section>
       </nav>
 
       <div className="p-3">
-        <div className="soft-chip rounded-2xl border border-blue-100/70 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+        <div className="soft-chip rounded-2xl border border-white/80 bg-white/80 p-4">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
             <BarChart3 className="h-4 w-4 text-blue-600" /> Super Admin central
           </div>
@@ -125,7 +125,7 @@ export function AdminSidebar() {
         <button
           type="button"
           onClick={() => void logout()}
-          className="mt-2 flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+          className="mt-2 flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-sky-900/70 transition hover:bg-white/70 hover:text-slate-900"
         >
           <LogOut className="h-4 w-4" /> Déconnexion
         </button>
@@ -136,7 +136,7 @@ export function AdminSidebar() {
 
 export function AdminMobileNav() {
   return (
-    <div className="border-b border-slate-100 bg-white lg:hidden">
+    <div className="border-b border-sky-200/70 bg-sky-100 lg:hidden">
       <div className="flex items-center gap-2 px-4 py-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-md shadow-blue-600/30">
           <ShieldCheck className="h-4 w-4" />

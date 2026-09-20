@@ -144,7 +144,7 @@ function StatCard({
   const t = tones[tone];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="soft-card rounded-2xl border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">
         <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tile}`}>
           <Icon className="h-5 w-5" />
@@ -172,7 +172,7 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <Card className={`rounded-2xl border-slate-200 bg-white p-5 ${className}`}>
+    <Card className={`soft-card rounded-2xl border-slate-200 bg-white p-5 ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="font-semibold tracking-tight text-slate-900">{title}</h2>
@@ -195,7 +195,7 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
 
   return (
     <Link href={`/admin/projects/${project.id}`} className="block h-full">
-      <Card className="group flex h-full flex-col rounded-2xl border-slate-200 bg-white p-5 transition hover:border-blue-200">
+      <Card className="soft-card group flex h-full flex-col rounded-2xl border-slate-200 bg-white p-5 transition hover:border-blue-200">
         <div className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <span
@@ -403,7 +403,7 @@ export default function SuperAdminHubPage() {
 
   return (
     <div className="min-h-full text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-sky-200/60 bg-sky-100/95 backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 md:px-7">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30 lg:hidden">
@@ -706,7 +706,7 @@ export default function SuperAdminHubPage() {
             </div>
           </div>
           {filteredProjects.length === 0 ? (
-            <Card className="rounded-2xl border-slate-200 bg-white p-8 text-center">
+            <Card className="soft-card rounded-2xl border-slate-200 bg-white p-8 text-center">
               <Search className="mx-auto h-6 w-6 text-slate-300" />
               <p className="mt-2 text-sm text-slate-500">Aucun produit ne correspond aux filtres.</p>
             </Card>
