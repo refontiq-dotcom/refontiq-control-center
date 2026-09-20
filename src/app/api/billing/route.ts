@@ -31,6 +31,7 @@ export async function GET(req: Request) {
   if (from) query = query.gte("created_at", `${from}T00:00:00.000Z`);
   if (to) query = query.lt("created_at", `${to}T00:00:00.000Z`);
 
+  const { data, error } = await query;
   if (error) {
     console.error("[billing GET]", error);
     return NextResponse.json({ error: "Impossible de charger la facturation" }, { status: 500 });
