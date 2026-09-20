@@ -228,7 +228,7 @@ export default function ProjectCockpitPage() {
                 </div>
               )) : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-slate-500">Aucun paiement en attente pour ce projet.</div>}
             </div>
-            <Link href="/admin/billing" className="mt-4 inline-flex items-center text-xs font-semibold text-slate-700 underline">Ouvrir le centre des paiements</Link>
+            <Link href="/admin/finance" className="mt-4 inline-flex items-center text-xs font-semibold text-slate-700 underline">Ouvrir le centre des paiements</Link>
           </Card>
 
           <Card className="border-slate-200 p-5">
@@ -242,7 +242,7 @@ export default function ProjectCockpitPage() {
         </section>
 
         <Card className="border-slate-200 p-5">
-          <div className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Intelligence du projet</h2><p className="mt-1 text-xs text-slate-500">Signaux calculés à partir des données réelles du projet.</p></div></div>
+          <div className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Signaux du projet</h2><p className="mt-1 text-xs text-slate-500">Signaux déterministes calculés à partir des données réelles du projet.</p></div></div>
           <div className="mt-4 space-y-2">
             {intelligence.length ? intelligence.map((item) => (
               <div key={item.id} className={`rounded-xl border p-3 ${item.severity === "critical" ? "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}`}>
@@ -250,7 +250,7 @@ export default function ProjectCockpitPage() {
                 <div className="mt-1 text-sm text-slate-700">{item.message}</div>
                 <div className="mt-2 text-[10px] uppercase tracking-wide text-slate-400">Source : {item.source}</div>
               </div>
-            )) : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-slate-500">Aucun signal intelligent actif pour ce projet.</div>}
+            )) : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-slate-500">Aucun signal actif pour ce projet.</div>}
           </div>
         </Card>
 
@@ -265,7 +265,7 @@ export default function ProjectCockpitPage() {
           </Card>
 
           <Card className="border-slate-200 p-5">
-            <div className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Points à surveiller</h2><p className="mt-1 text-xs text-slate-500">Lecture intelligente basée uniquement sur les données disponibles.</p></div></div>
+            <div className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-slate-500" /><div><h2 className="font-semibold">Points à surveiller</h2><p className="mt-1 text-xs text-slate-500">Lecture déterministe basée uniquement sur les données disponibles.</p></div></div>
             <div className="mt-4 space-y-2">
               {stale && <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">La dernière synchronisation est absente ou trop ancienne. Vérifier la remontée des métriques.</div>}
               {!metric && <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">Aucune métrique reçue pour ce projet. Le Control Center ne calcule pas de valeur à partir d'une estimation.</div>}
