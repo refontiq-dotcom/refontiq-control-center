@@ -13,16 +13,23 @@ async function requireSuperAdmin() {
   return data?.role === "super_admin" && data?.is_active !== false;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   if (!(await requireSuperAdmin())) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  const url = new URL(req.url);
+  const from = url.searchParams.get("from");
+  const to = url.searchParams.get("to");
+  if ((from && !to) || (!from && to) || (from && to && from > to)) return NextResponse.json({ error: "Période invalide" }, { status: 400 });
+
   const admin = createAdminClient();
-  const { data, error } = await admin
+  let query = admin
     .from("payment_validation_requests")
     .select("id,produit,produit_ref,plan,amount,status,requested_by,sender_phone,validated_by,validated_at,notes,created_at")
     .in("produit", ["schooly", "sejoura"])
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(100);
+  if (from) query = query.gte("created_at", `${from}T00:00:00.000Z`);
+  if (to) query = query.lt("created_at", `${to}T00:00:00.000Z`);
 
   if (error) {
     console.error("[billing GET]", error);
