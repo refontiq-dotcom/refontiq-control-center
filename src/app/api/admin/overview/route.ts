@@ -76,6 +76,13 @@ export async function GET(request: Request) {
     ...metric,
     details: metric.details ?? {},
   }));
+  const periodMetrics = hasPeriod
+    ? normalizedMetrics.map((metric) => ({
+        ...metric,
+        derniere_synchro: metric.captured_at ?? metric.derniere_synchro,
+        details: {},
+      }))
+    : normalizedMetrics;
   const normalizedPayments = (payments ?? []).map((payment) => ({
     id: payment.id,
     produit: payment.produit,
