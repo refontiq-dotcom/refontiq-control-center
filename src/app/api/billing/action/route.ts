@@ -63,6 +63,7 @@ export async function POST(req: Request) {
           action,
           produit: request.produit,
           controlCenterRequestId: request.id,
+          produitRef: request.produit_ref,
           validatorId: superAdmin.id,
         }),
         signal: AbortSignal.timeout(10_000),
