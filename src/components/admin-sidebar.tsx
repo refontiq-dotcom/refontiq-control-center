@@ -39,6 +39,7 @@ const projectItems = [
 
 const financeItems = [
   { href: "/admin/finance", label: "Finance & paiements", icon: CreditCard },
+  { href: "/admin/finance/recouvrement", label: "Recouvrement Schooly", icon: ShieldCheck },
 ];
 
 const adminItems = [
