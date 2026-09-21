@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { sendWebPushToAll } from "@/lib/web-push";
 
 const SHARED_SECRET = process.env.METRICS_PUSH_SECRET;
 
@@ -25,7 +26,7 @@ export async function GET(req: Request) {
   let query = admin
     .from("payment_validation_requests")
     .select("id,produit,produit_ref,plan,amount,status,requested_by,sender_phone,validated_by,validated_at,notes,created_at")
-    .in("produit", ["schooly", "sejoura"])
+    .in("produit", ["schooly", "sejoura", "trouvetou"])
     .order("created_at", { ascending: false })
     .limit(100);
   if (from) query = query.gte("created_at", `${from}T00:00:00.000Z`);
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    if (!["schooly", "sejoura"].includes(body?.produit) || !body?.produit_ref || !body?.plan) {
+    if (!["schooly", "sejoura", "trouvetou"].includes(body?.produit) || !body?.produit_ref || !body?.plan) {
       return NextResponse.json({ error: "Demande de facturation invalide" }, { status: 400 });
     }
 
@@ -63,7 +64,29 @@ export async function POST(req: Request) {
       notes: body.notes ? String(body.notes) : null,
     }).select().single();
 
-    if (error) throw error;
+    if (error) throw error
+
+    const productLabel =
+      body.produit === "trouvetou" ? "Trouvetou" :
+      body.produit === "sejoura" ? "Séjoura" : "Schooly"
+    const title = `Nouveau paiement ${productLabel}`
+    const message = `${Number(body.amount || 0).toLocaleString("fr-FR")} FCFA • référence ${body.produit_ref}`
+    await admin.from("telegram_alerts").insert({
+      level: "info",
+      type: "billing",
+      title,
+      message,
+      sent_at: new Date().toISOString(),
+      status: "sent",
+    })
+    void sendWebPushToAll({
+      title,
+      message,
+      level: "info",
+      href: "/admin/finance",
+      tag: `billing:new:${data.id}`,
+    }).catch((pushError) => console.error("[web-push billing]", pushError))
+
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("[billing POST]", error);

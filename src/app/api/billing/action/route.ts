@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     const callbackConfig: Record<string, string | undefined> = {
       schooly: process.env.SCHOOLY_URL?.replace(/\/$/, ""),
       sejoura: process.env.SEJOURA_URL?.replace(/\/$/, ""),
+      trouvetou: (process.env.SCHOOLY_URL || "").replace(/\/$/, ""),
     };
     const productUrl = callbackConfig[request.produit];
 
@@ -60,7 +61,9 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           requestId: request.produit_ref,
           action,
+          produit: request.produit,
           controlCenterRequestId: request.id,
+          produitRef: request.produit_ref,
           validatorId: superAdmin.id,
         }),
         signal: AbortSignal.timeout(10_000),
