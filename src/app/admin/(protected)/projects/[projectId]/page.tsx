@@ -13,6 +13,8 @@ import {
   ExternalLink,
   Lightbulb,
   RefreshCw,
+  KeyRound,
+  Copy,
   ShieldCheck,
   Users,
   Wallet,
@@ -95,6 +97,34 @@ export default function ProjectCockpitPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [period, setPeriod] = useState<PeriodRange>(() => getPresetRange("30d"));
+  const [rotatingTrouvetouKey, setRotatingTrouvetouKey] = useState(false);
+  const [newTrouvetouKey, setNewTrouvetouKey] = useState<string | null>(null);
+  const [trouvetouKeyError, setTrouvetouKeyError] = useState<string | null>(null);
+
+  const rotateTrouvetouKey = useCallback(async () => {
+    if (rotatingTrouvetouKey) return;
+    setRotatingTrouvetouKey(true);
+    setNewTrouvetouKey(null);
+    setTrouvetouKeyError(null);
+
+    try {
+      const response = await fetch("/api/admin/projects/sejoura/trouvetou-key", {
+        method: "POST",
+        cache: "no-store",
+      });
+      const body = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(body?.error || "Impossible de régénérer la clé Trouvetou.");
+      }
+
+      setNewTrouvetouKey(body.apiKey ?? null);
+    } catch (err) {
+      setTrouvetouKeyError(err instanceof Error ? err.message : "Impossible de régénérer la clé Trouvetou.");
+    } finally {
+      setRotatingTrouvetouKey(false);
+    }
+  }, [rotatingTrouvetouKey]);
 
   const load = useCallback(async () => {
     if (!project) return;
@@ -205,6 +235,72 @@ export default function ProjectCockpitPage() {
             <div className="mt-1 text-[11px] text-slate-500">{stale ? "Donnée à vérifier" : "donnée récente"}</div>
           </Card>
         </section>
+
+        {project.id === "sejoura" && (
+          <Card className="border-slate-200 p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+                  <KeyRound className="h-5 w-5 text-slate-700" />
+                </div>
+                <div>
+                  <h2 className="font-semibold">Intégration Trouvetou</h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                    Gestion sécurisée de la clé utilisée par Séjoura pour publier ses annonces sur Trouvetou.
+                  </p>
+                </div>
+              </div>
+              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                Super Admin
+              </span>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm font-semibold text-amber-900">Régénérer la clé d'intégration</p>
+              <p className="mt-1 text-xs leading-5 text-amber-800">
+                L'ancienne clé cessera immédiatement de fonctionner. La nouvelle clé sera affichée une seule fois.
+              </p>
+              <Button
+                type="button"
+                className="mt-3 gap-2"
+                variant="warning"
+                disabled={rotatingTrouvetouKey}
+                onClick={() => void rotateTrouvetouKey()}
+              >
+                <KeyRound className="h-4 w-4" />
+                {rotatingTrouvetouKey ? "Génération en cours..." : "Régénérer la clé Trouvetou"}
+              </Button>
+            </div>
+
+            {trouvetouKeyError && (
+              <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                {trouvetouKeyError}
+              </div>
+            )}
+
+            {newTrouvetouKey && (
+              <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <p className="text-sm font-semibold text-emerald-900">Nouvelle clé générée</p>
+                <p className="mt-1 text-xs leading-5 text-emerald-800">
+                  Copie-la maintenant dans l'environnement Production de Séjoura. Elle ne sera plus récupérable ici.
+                </p>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs text-slate-800">
+                    {newTrouvetouKey}
+                  </code>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="shrink-0 gap-2"
+                    onClick={() => void navigator.clipboard.writeText(newTrouvetouKey)}
+                  >
+                    <Copy className="h-4 w-4" /> Copier
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
 
         {metric?.details && Object.keys(metric.details).length > 0 && (
           <Card className="border-slate-200 p-5">
