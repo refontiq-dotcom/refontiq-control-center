@@ -1,5 +1,3 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 // NOTE SÉCURITÉ : le mot de passe admin vit UNIQUEMENT dans Supabase Auth
 // (compte refontiq@gmail.com) et dans `.env.local` (variable
 // SUPER_ADMIN_PASSWORD, jamais commitée). Aucun secret ne doit être
