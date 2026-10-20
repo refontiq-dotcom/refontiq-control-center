@@ -86,6 +86,7 @@ export function makeMemoryDb(options: {
       },
       eq: (c: string, v: unknown) => (filters.push([c, v]), b),
       limit: () => b,
+      order: () => b,
       upsert: (r: Row, o?: { onConflict?: string }) => ((kind = "upsert"), (row = r), (conflict = o?.onConflict ?? "projet"), b),
       insert: (r: Row) => ((kind = "insert"), (row = r), b),
       maybeSingle: () => ((single = true), Promise.resolve(run())),
