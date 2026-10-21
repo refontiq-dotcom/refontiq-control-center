@@ -58,7 +58,12 @@ commission. Affiché à part, libellé « volume géré », jamais additionné a
 |---|---|---|---|---|
 | **Séjoura** | chaque résidence | **abonnement mensuel** | fin de mois | récurrent → MRR |
 | **Schooly** | chaque établissement | **1 000 F par élève**, à l'inscription confirmée | à chaque inscription | **ponctuel par événement, PAS un MRR** |
-| Trouvetou, Docly | — | à définir | — | À CONFIRMER |
+| **Docly** | chaque abonné | **abonnement mensuel** | de la date d'activation à la date de fin | récurrent → MRR |
+| **Trouvetou** | annonceurs | **publicité** affichée sur la plateforme | à chaque achat de publicité | ponctuel ; **pas d'abonnement** |
+
+Trouvetou n'a pas de revenu d'abonnement. Le Control Center y suit : **revenus publicitaires**
+(paiements de publicité validés), **nombre d'utilisateurs** (total, actifs 30 j, nouveaux 7 j),
+trafic (déjà collecté dans `trouvetou_traffic_daily`) et annonces/publicités actives.
 
 **Schooly — vérifié dans la base le 21/10/2026** : le mécanisme existe déjà (`platform_fee_ledger` :
 une ligne `enrollment_confirmed` de 1 000 F par inscription, puis `platform_invoices` par
@@ -73,6 +78,34 @@ chiffres distincts, et **non** un « MRR » :
 distinct des encaissements des hôtels auprès de leurs voyageurs (volume géré, §4.1-B). Un
 abonnement dû en fin de mois et non validé devient un **impayé** après le délai de grâce
 (À CONFIRMER : durée).
+
+### 4.5 Règles d'abonnement et de versement (PROPOSÉES, à valider)
+**Abonnements (Séjoura, Docly) — période « anniversaire »**
+- Une période va du **jour d'activation** à la veille du même quantième du mois suivant
+  (si le mois n'a pas ce quantième : dernier jour du mois). L'abonnement se renouvelle à
+  la date de fin.
+- Délai de grâce **5 jours** après la date de fin ; passé ce délai, le compte passe en
+  **lecture seule** (jamais de suppression de données) et le montant devient un **impayé**.
+- Un changement de formule prend effet à la **période suivante** (pas de prorata).
+- MRR = somme des abonnements **actifs à la date du jour** ; revenu = paiement **validé**.
+- Raison : les échéances sont étalées sur le mois au lieu de tomber toutes le même jour,
+  ce qui évite la pointe de validations manuelles de fin de mois.
+
+**Schooly — 1 000 F par élève et par année scolaire**
+- Fait générateur : inscription **confirmée** ; une seule fois par inscription (garanti en
+  base par `UNIQUE (product_id, event_id)`) ; l'année suivante, nouvelle inscription →
+  nouveaux 1 000 F. Montant paramétrable (`billing_configs`, 1 000 par défaut).
+- **Versement proposé : facture mensuelle à terme échu** par établissement : le 1ᵉʳ de chaque
+  mois, génération de la facture des frais `due` du mois écoulé (fonction existante
+  `generate_platform_invoices`), échéance **15 jours**, règlement par mobile money,
+  validation dans le Control Center (flux `payment_validation_requests` existant).
+- Statuts du frais : `due` → `collected` → `settled`.
+
+**Cas non tranchés par la règle actuelle (À CONFIRMER)**
+1. *Transfert d'élève en cours d'année* : l'unicité porte sur l'inscription, pas sur
+   (élève, année). Un transfert crée une nouvelle inscription → **possible double facturation**
+   de 1 000 F pour le même élève la même année.
+2. *Inscription annulée après confirmation* : le frais reste `due`, aucune annulation prévue.
 
 ### 4.4 Charges — saisie manuelle
 Table dédiée (à venir) : `date`, `catégorie` (libre, enrichie au fil de l'eau), `libellé`,
@@ -116,10 +149,14 @@ Le contrat v1 reste valide. Ajouts proposés (v1.1, rétrocompatibles) dans `det
 4. Accès : le propriétaire seul (un seul rôle suffit pour l'instant ; la conception ne l'interdit pas à l'avenir).
 5. Schooly : frais par inscription uniquement (pas d'abonnement).
 
-**Encore à confirmer** :
-- revenu de Trouvetou et de Docly (modèle économique) ;
-- délai de grâce avant qu'un abonnement Séjoura soit un impayé ;
-- si les 1 000 F de Schooly sont réglés par facture périodique (mensuelle, trimestrielle…) ou autrement.
+**Décidé aussi** : Docly = abonnement mensuel ; Trouvetou = revenus publicitaires + nombre
+d'utilisateurs (pas d'abonnement) ; Schooly = 1 000 F une fois par élève et par année.
+
+**Encore à confirmer** (propositions en §4.5) :
+- période d'abonnement « anniversaire » et délai de grâce de 5 jours ;
+- facturation mensuelle à terme échu pour Schooly ;
+- transfert d'élève et annulation d'inscription (double facturation possible) ;
+- Trouvetou : les publicités sont-elles achetées par des résidences (paiement validé par vous) ou fournies par un réseau publicitaire ?
 
 ## 9. Dette connue liée (issue de l'audit)
 - `POST /api/billing` compare encore son secret sans temps constant et réutilise `METRICS_PUSH_SECRET` (un secret pour trois usages) → secret dédié, au lot « commandes et audit ».
