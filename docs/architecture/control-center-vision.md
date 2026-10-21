@@ -101,11 +101,14 @@ abonnement dû en fin de mois et non validé devient un **impayé** après le d�
   validation dans le Control Center (flux `payment_validation_requests` existant).
 - Statuts du frais : `due` → `collected` → `settled`.
 
-**Cas non tranchés par la règle actuelle (À CONFIRMER)**
-1. *Transfert d'élève en cours d'année* : l'unicité porte sur l'inscription, pas sur
-   (élève, année). Un transfert crée une nouvelle inscription → **possible double facturation**
-   de 1 000 F pour le même élève la même année.
-2. *Inscription annulée après confirmation* : le frais reste `due`, aucune annulation prévue.
+**Cas limites — DÉCIDÉS le 21/10/2026**
+1. *Transfert d'élève en cours d'année* → **1 000 F une seule fois par élève et par année**,
+   quel que soit le nombre d'établissements. Écart avec le système actuel : l'unicité porte
+   sur l'inscription, pas sur (élève, année) → un transfert peut aujourd'hui facturer deux
+   fois. **Correctif à faire côté Schooly** (contrainte unique par élève et année + reprise
+   de l'existant), via une migration dédiée, relue et testée avant toute application.
+2. *Inscription annulée après confirmation* → **les 1 000 F restent dus pour l'année**.
+   C'est déjà le comportement actuel : rien à changer.
 
 ### 4.4 Charges — saisie manuelle
 Table dédiée (à venir) : `date`, `catégorie` (libre, enrichie au fil de l'eau), `libellé`,
@@ -152,11 +155,15 @@ Le contrat v1 reste valide. Ajouts proposés (v1.1, rétrocompatibles) dans `det
 **Décidé aussi** : Docly = abonnement mensuel ; Trouvetou = revenus publicitaires + nombre
 d'utilisateurs (pas d'abonnement) ; Schooly = 1 000 F une fois par élève et par année.
 
-**Encore à confirmer** (propositions en §4.5) :
-- période d'abonnement « anniversaire » et délai de grâce de 5 jours ;
-- facturation mensuelle à terme échu pour Schooly ;
-- transfert d'élève et annulation d'inscription (double facturation possible) ;
-- Trouvetou : les publicités sont-elles achetées par des résidences (paiement validé par vous) ou fournies par un réseau publicitaire ?
+**Validé** : période d'abonnement « anniversaire » avec 5 jours de grâce ; facture mensuelle
+à terme échu pour Schooly ; frais Schooly uniques par élève et par année, conservés en cas
+d'annulation.
+
+**Hypothèse de travail, à confirmer** : les publicités Trouvetou sont **achetées par des
+annonceurs qui paient Refontiq** (mobile money, paiement validé par le propriétaire), ce que
+le flux de paiement publicitaire déjà présent dans Séjoura suggère. Le revenu publicitaire
+appartient à Refontiq. La conception prévoit un champ « source » pour accueillir plus tard
+un réseau publicitaire (type AdSense) sans refonte.
 
 ## 9. Dette connue liée (issue de l'audit)
 - `POST /api/billing` compare encore son secret sans temps constant et réutilise `METRICS_PUSH_SECRET` (un secret pour trois usages) → secret dédié, au lot « commandes et audit ».
