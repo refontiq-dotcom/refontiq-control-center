@@ -1,7 +1,8 @@
 # Control Center — vision, modèle financier et feuille de route
 
-> Statut : **proposition** (aucun changement de code ni de production). Les points marqués
-> « À CONFIRMER » demandent une décision du propriétaire avant implémentation.
+> Statut : **proposition validée dans ses grandes lignes** par le propriétaire (21/10/2026) ;
+> aucun changement de code ni de production dans ce document. Les décisions prises sont en
+> §4.3 et §8 ; ce qui reste « À CONFIRMER » est signalé.
 
 ## 1. Mission
 Le Control Center est le **poste de pilotage de l'entreprise Refontiq** : ses finances, ses
@@ -38,10 +39,10 @@ faut-il faire ?*
 **A. Finances de Refontiq (c'est VOTRE argent)**
 | Indicateur | Définition |
 |---|---|
-| Revenu | paiement reçu d'un client et **validé** (abonnement, commission, frais d'installation — À CONFIRMER) ; comptabilisé à la date de validation |
+| Revenu | paiement reçu d'un client et **validé** ; comptabilisé à la date de validation. Sources **décidées** : abonnements Séjoura et frais par inscription Schooly (§4.3) |
 | MRR | somme mensualisée des abonnements **actifs** payés à Refontiq |
 | ARR | MRR × 12 |
-| Charges | hébergement, outils, salaires, publicité… saisies par catégorie (À CONFIRMER : saisie manuelle puis import) |
+| Charges | **saisie manuelle** (décidé) : date, catégorie libre, libellé, montant XOF, récurrente oui/non. Catégories à définir au fil de l'eau |
 | Marge | revenu − charges, par mois et par produit |
 | Impayés | échéances dues et non validées au-delà du délai |
 | Churn | abonnements actifs en début de mois, résiliés ou expirés dans le mois |
@@ -52,8 +53,34 @@ Volume géré par vos clients (ex. encaissements des hôtels, frais scolaires co
 Sert à mesurer la **santé et l'usage** d'un produit et, si applicable, à calculer une
 commission. Affiché à part, libellé « volume géré », jamais additionné au revenu de Refontiq.
 
+### 4.3 Revenus de Refontiq par produit (décisions du propriétaire)
+| Produit | Qui paie Refontiq | Quoi | Rythme | Nature |
+|---|---|---|---|---|
+| **Séjoura** | chaque résidence | **abonnement mensuel** | fin de mois | récurrent → MRR |
+| **Schooly** | chaque établissement | **1 000 F par élève**, à l'inscription confirmée | à chaque inscription | **ponctuel par événement, PAS un MRR** |
+| Trouvetou, Docly | — | à définir | — | À CONFIRMER |
+
+**Schooly — vérifié dans la base le 21/10/2026** : le mécanisme existe déjà (`platform_fee_ledger` :
+une ligne `enrollment_confirmed` de 1 000 F par inscription, puis `platform_invoices` par
+établissement et période). Situation constatée : 2 inscriptions, **2 000 F dus, 0 F encaissé**,
+1 établissement, aucune facture émise. Le Control Center doit donc afficher pour Schooly trois
+chiffres distincts, et **non** un « MRR » :
+- `frais_dus` — frais générés par les inscriptions, pas encore encaissés ;
+- `frais_encaisses` — factures payées (`paid_amount`) ;
+- `inscriptions_facturables` — nombre d'inscriptions de la période.
+
+**Séjoura** : le revenu de Refontiq est l'abonnement de chaque résidence (`subscriptions`),
+distinct des encaissements des hôtels auprès de leurs voyageurs (volume géré, §4.1-B). Un
+abonnement dû en fin de mois et non validé devient un **impayé** après le délai de grâce
+(À CONFIRMER : durée).
+
+### 4.4 Charges — saisie manuelle
+Table dédiée (à venir) : `date`, `catégorie` (libre, enrichie au fil de l'eau), `libellé`,
+`montant` (XOF entier), `récurrente`, `créé_par`. Une charge saisie n'est jamais modifiée ni
+supprimée : on la **contre-passe** (traçabilité). Accès : super administrateur uniquement.
+
 ### 4.2 Règles
-- Montants en **XOF, entiers** (aucune virgule flottante) ; autre devise : convertie à la saisie, taux conservé.
+- Montants en **XOF (franc CFA), entiers**, devise unique (décidé) : aucune conversion, aucune virgule flottante.
 - Mois calendaires en **UTC** (même fuseau que Côte d'Ivoire) ; période = [début, fin[.
 - Une écriture financière **n'est jamais modifiée ni supprimée** : on contre-passe (traçabilité).
 - Chaque indicateur affiche sa **date de collecte** et son **statut** : frais / périmé / inconnu.
@@ -81,12 +108,18 @@ Le contrat v1 reste valide. Ajouts proposés (v1.1, rétrocompatibles) dans `det
 | **3. Finances** | registre des revenus, charges, marge, impayés, historique mensuel | rapprochement avec vos relevés réels |
 | **4. Intelligence** | tendances, anomalies, prévisions, recommandations | chaque conseil cite sa donnée ; prévisions testées sur l'historique |
 
-## 8. Questions ouvertes (À CONFIRMER)
-1. Quelles sources de revenu : abonnements, commissions, frais d'installation, autres ?
-2. Charges : saisie manuelle dans le Control Center ou import ? catégories ?
-3. Tout en XOF ? Des clients paient-ils dans une autre devise ?
-4. Qui consulte le Control Center : vous seul, ou aussi des associés / un comptable (droits de lecture) ?
-5. Faut-il facturer Schooly par commission, abonnement, ou les deux ?
+## 8. Décisions et points ouverts
+**Décidé (21/10/2026)** :
+1. Revenus : abonnements mensuels Séjoura ; 1 000 F par élève à l'inscription pour Schooly.
+2. Charges : saisie manuelle pour l'instant, catégories non figées.
+3. Devise : franc CFA (XOF) uniquement.
+4. Accès : le propriétaire seul (un seul rôle suffit pour l'instant ; la conception ne l'interdit pas à l'avenir).
+5. Schooly : frais par inscription uniquement (pas d'abonnement).
+
+**Encore à confirmer** :
+- revenu de Trouvetou et de Docly (modèle économique) ;
+- délai de grâce avant qu'un abonnement Séjoura soit un impayé ;
+- si les 1 000 F de Schooly sont réglés par facture périodique (mensuelle, trimestrielle…) ou autrement.
 
 ## 9. Dette connue liée (issue de l'audit)
 - `POST /api/billing` compare encore son secret sans temps constant et réutilise `METRICS_PUSH_SECRET` (un secret pour trois usages) → secret dédié, au lot « commandes et audit ».
