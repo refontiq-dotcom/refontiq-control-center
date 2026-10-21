@@ -1,5 +1,5 @@
+import { dataConfidence, expectedIntervalMinutes, formatDuration, staleAfterMinutes, type DataConfidence } from "@/lib/freshness";
 export type IntelligenceSeverity = "info" | "warning" | "critical";
-export type DataConfidence = "fresh" | "stale" | "missing";
 
 export interface IntelligenceMetric {
   projet: string;
@@ -32,19 +32,8 @@ export interface IntelligenceItem {
   metadata?: Record<string, unknown>;
 }
 
-export function syncAgeMinutes(value?: string | null) {
-  if (!value) return Number.POSITIVE_INFINITY;
-  const time = new Date(value).getTime();
-  if (!Number.isFinite(time)) return Number.POSITIVE_INFINITY;
-  return Math.max(0, (Date.now() - time) / 60_000);
-}
-
-export function dataConfidence(value?: string | null): DataConfidence {
-  const age = syncAgeMinutes(value);
-  if (!value || !Number.isFinite(age)) return "missing";
-  if (age <= 30) return "fresh";
-  return "stale";
-}
+export { syncAgeMinutes, dataConfidence } from "@/lib/freshness";
+export type { DataConfidence };
 
 export function buildDeterministicIntelligence(
   metrics: IntelligenceMetric[],
@@ -54,7 +43,7 @@ export function buildDeterministicIntelligence(
   const items: IntelligenceItem[] = [];
 
   for (const metric of metrics) {
-    const confidence = dataConfidence(metric.derniere_synchro);
+    const confidence = dataConfidence(metric.derniere_synchro, metric.projet);
     if (confidence === "missing") {
       items.push({
         id: `missing-${metric.projet}`,
@@ -74,7 +63,7 @@ export function buildDeterministicIntelligence(
         kind: "attention",
         severity: "warning",
         title: "Synchronisation ancienne",
-        message: `La dernière synchronisation de ${metric.nom} date de plus de 30 minutes.`,
+        message: `La dernière synchronisation de ${metric.nom} date de plus de ${formatDuration(staleAfterMinutes(metric.projet))} (cadence attendue : ${formatDuration(expectedIntervalMinutes(metric.projet))}).`,
         source: "portfolio_metrics.derniere_synchro",
         status: "open",
         created_at: new Date().toISOString(),
