@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
+import { requireSuperAdmin } from "@/lib/auth/super-admin";
 
+// Cette route répondait « success / queued » sans rien déclencher, et sans
+// authentification : un faux succès exploitable par n'importe qui.
+//
+// Elle est désormais réservée au Super Admin et répond HONNÊTEMENT 501 tant que
+// le déclenchement réel (appel authentifié du produit cible, avec suivi de la
+// commande) n'est pas implémenté — voir le lot « pilotage sécurisé ».
 export async function POST() {
-  try {
-    // En production, on déclencherait un job queue qui appelle les endpoints
-    // métriques de chaque produit (Schooly, Séjoura, Docly…) avec leurs
-    // secrets propres. Ici on simule un déclenchement asynchrone.
-    return NextResponse.json({
-      success: true,
-      ref: `resync-${Date.now()}`,
-      status: "queued",
-    });
-  } catch (err: any) {
-    console.error("[resync-metrics POST]", err);
-    return NextResponse.json({ error: "Impossible de déclencher la ré synchronisation" }, { status: 500 });
-  }
+  const auth = await requireSuperAdmin();
+  if (!auth.ok) return auth.response;
+
+  return NextResponse.json(
+    {
+      success: false,
+      status: "not_implemented",
+      error: "La re-synchronisation à la demande n'est pas encore disponible.",
+    },
+    { status: 501 }
+  );
 }

@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
@@ -29,13 +29,15 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  // getUser() valide le jeton auprès du serveur d'authentification ; getSession()
+  // ne fait que décoder le cookie, ce qui ne prouve rien côté serveur.
+  const { data: { user } } = await supabase.auth.getUser();
 
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
   const isLoginRoute = request.nextUrl.pathname === "/admin";
 
   if (isAdminRoute && !isLoginRoute) {
-    if (!session) {
+    if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin";
       url.searchParams.set("next", request.nextUrl.pathname);
@@ -45,7 +47,7 @@ export async function middleware(request: NextRequest) {
     const { data: userData } = await supabase
       .from("users")
       .select("role, is_active")
-      .eq("auth_user_id", session.user.id)
+      .eq("auth_user_id", user.id)
       .single();
 
     if (!userData || userData.role !== "super_admin" || userData.is_active === false) {
@@ -55,11 +57,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (isLoginRoute && session) {
+  if (isLoginRoute && user) {
     const { data: userData } = await supabase
       .from("users")
       .select("role")
-      .eq("auth_user_id", session.user.id)
+      .eq("auth_user_id", user.id)
       .single();
 
     if (userData?.role === "super_admin") {

@@ -43,7 +43,7 @@ export async function sendWebPushToAll(payload: {
   const userIds = [...new Set((subscriptions ?? []).map((s) => s.user_id))];
   const { data: preferenceRows } = userIds.length
     ? await admin.from("notification_preferences").select("*").in("user_id", userIds)
-    : { data: [] as any[] };
+    : { data: [] as Array<Record<string, unknown> & { user_id: string }> };
   const preferences = new Map((preferenceRows ?? []).map((row) => [row.user_id, { ...defaults, ...row }]));
   const category = payload.category || "system_alerts";
   const level = payload.level || "info";
@@ -59,8 +59,9 @@ export async function sendWebPushToAll(payload: {
         JSON.stringify(payload)
       );
       sent++;
-    } catch (error: any) {
-      if (error?.statusCode === 404 || error?.statusCode === 410) {
+    } catch (error) {
+      const statusCode = (error as { statusCode?: number } | null)?.statusCode;
+      if (statusCode === 404 || statusCode === 410) {
         await admin.from("push_subscriptions").delete().eq("id", subscription.id);
       } else {
         console.error("[web-push]", error);
