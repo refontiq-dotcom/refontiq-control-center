@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { formatFCFA } from "@/lib/utils";
 import { isStale } from "@/lib/freshness";
+import { isRecurringRevenue, revenueModel } from "@/lib/revenue-model";
 import { REFONTIQ_PROJECTS, type RefontiqProject } from "@/lib/projects";
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
@@ -219,9 +220,9 @@ export default function ProjectCockpitPage() {
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="border-slate-200 p-4">
-            <div className="flex items-center gap-2 text-xs text-slate-500"><Wallet className="h-4 w-4" /> Revenus / MRR</div>
-            <div className="mt-2 text-2xl font-bold">{metric ? formatFCFA(metric.mrr) : "—"}</div>
-            <div className="mt-1 text-[11px] text-slate-500">{metric ? "montant transmis par le projet" : "donnée non synchronisée"}</div>
+            <div className="flex items-center gap-2 text-xs text-slate-500"><Wallet className="h-4 w-4" /> {isRecurringRevenue(project?.id) ? "MRR (abonnements)" : "Modèle de revenu"}</div>
+            <div className="mt-2 text-2xl font-bold">{!isRecurringRevenue(project?.id) ? revenueModel(project?.id).label : metric ? formatFCFA(metric.mrr) : "—"}</div>
+            <div className="mt-1 text-[11px] text-slate-500">{!isRecurringRevenue(project?.id) ? "pas d'abonnement : le MRR ne s'applique pas" : metric ? "montant transmis par le projet" : "donnée non synchronisée"}</div>
           </Card>
           <Card className="border-slate-200 p-4">
             <div className="flex items-center gap-2 text-xs text-slate-500"><Users className="h-4 w-4" /> Clients / comptes actifs</div>

@@ -1,3 +1,4 @@
+import { isRecurringRevenue } from "@/lib/revenue-model";
 import { dataConfidence, expectedIntervalMinutes, formatDuration, staleAfterMinutes, type DataConfidence } from "@/lib/freshness";
 export type IntelligenceSeverity = "info" | "warning" | "critical";
 
@@ -114,7 +115,7 @@ export function buildDeterministicIntelligence(
       });
     }
 
-    if (previous && previous.mrr > 0 && metric.mrr === 0) {
+    if (isRecurringRevenue(metric.projet) && previous && previous.mrr > 0 && metric.mrr === 0) {
       items.push({
         id: `drop-mrr-${metric.projet}`,
         projet: metric.projet,

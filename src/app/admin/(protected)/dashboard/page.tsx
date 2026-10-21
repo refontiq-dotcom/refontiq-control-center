@@ -37,6 +37,7 @@ import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/component
 import { AdminNotifications } from "@/components/admin-notifications";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { isStale } from "@/lib/freshness";
+import { isRecurringRevenue, mrrTrendByDay, revenueModel, sumRecurringMrr } from "@/lib/revenue-model";
 import {
   AreaChart,
   DonutChart,
@@ -209,8 +210,8 @@ function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: P
           <p className="mt-0.5 truncate text-xs text-slate-500">{project.tagline}</p>
 
           <div className="mt-4">
-            <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">MRR</div>
-            <div className="mt-1 text-xl font-bold tracking-tight text-slate-900 dark:text-white">{metric ? formatFCFA(metric.mrr) : "—"}</div>
+            <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{isRecurringRevenue(project.id) ? "MRR" : "Revenu"}</div>
+            <div className="mt-1 text-xl font-bold tracking-tight text-slate-900 dark:text-white">{!isRecurringRevenue(project.id) ? revenueModel(project.id).label : metric ? formatFCFA(metric.mrr) : "—"}</div>
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2">
@@ -310,7 +311,7 @@ export default function SuperAdminHubPage() {
   const warningProjects = metrics.filter((m) => m.statut_sante === "warning");
   const staleProjects = REFONTIQ_PROJECTS.filter((p) => isStale(metricByProject.get(p.id)?.derniere_synchro, p.id));
   const activeAccounts = metrics.reduce((sum, m) => sum + m.comptes_actifs, 0);
-  const mrr = metrics.reduce((sum, m) => sum + m.mrr, 0);
+  const mrr = sumRecurringMrr(metrics);
   const pendingAmount = pendingPayments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
   const healthyProjects = metrics.filter((m) => m.statut_sante === "healthy").length;
   const healthRatio = metrics.length ? (healthyProjects / metrics.length) * 100 : 0;
@@ -322,7 +323,7 @@ export default function SuperAdminHubPage() {
 
   const donutData = useMemo(
     () => metrics
-      .filter((m) => m.mrr > 0)
+      .filter((m) => isRecurringRevenue(m.projet) && m.mrr > 0)
       .map((m) => ({
         label: m.nom,
         value: m.mrr,
@@ -332,17 +333,9 @@ export default function SuperAdminHubPage() {
   );
 
   const trendValues = useMemo(() => {
-    const byDay = new Map<string, number>();
-    for (const snapshot of snapshots) {
-      const day = (snapshot.captured_at ?? "").slice(0, 10);
-      if (!day) continue;
-      byDay.set(day, (byDay.get(day) ?? 0) + Number(snapshot.mrr || 0));
-    }
-    const series = Array.from(byDay.entries())
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([, value]) => value);
+    const series = mrrTrendByDay(snapshots).map((point) => point.mrr);
     if (series.length >= 2) return series.slice(-16);
-    return metrics.map((m) => m.mrr);
+    return metrics.filter((m) => isRecurringRevenue(m.projet)).map((m) => m.mrr);
   }, [snapshots, metrics]);
 
   const earliestByProject = useMemo(() => {
