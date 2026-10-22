@@ -36,6 +36,7 @@ import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
 import { AdminNotifications } from "@/components/admin-notifications";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { isStale } from "@/lib/freshness";
 import {
   AreaChart,
   DonutChart,
@@ -116,12 +117,6 @@ function healthMeta(health: Health) {
   }[health];
 }
 
-function syncAgeMinutes(value?: string | null) {
-  if (!value) return Number.POSITIVE_INFINITY;
-  const time = new Date(value).getTime();
-  return Number.isFinite(time) ? Math.max(0, (Date.now() - time) / 60_000) : Number.POSITIVE_INFINITY;
-}
-
 function StatCard({
   icon: Icon,
   label,
@@ -191,7 +186,7 @@ function SectionCard({
 
 function ProjectCard({ project, metric }: { project: RefontiqProject; metric?: PortfolioMetric }) {
   const health = healthMeta(metric?.statut_sante ?? "unknown");
-  const stale = syncAgeMinutes(metric?.derniere_synchro) > 30;
+  const stale = isStale(metric?.derniere_synchro, project.id);
 
   return (
     <Link href={`/admin/projects/${project.id}`} className="block h-full">
@@ -313,7 +308,7 @@ export default function SuperAdminHubPage() {
 
   const criticalProjects = metrics.filter((m) => m.statut_sante === "critical");
   const warningProjects = metrics.filter((m) => m.statut_sante === "warning");
-  const staleProjects = REFONTIQ_PROJECTS.filter((p) => syncAgeMinutes(metricByProject.get(p.id)?.derniere_synchro) > 30);
+  const staleProjects = REFONTIQ_PROJECTS.filter((p) => isStale(metricByProject.get(p.id)?.derniere_synchro, p.id));
   const activeAccounts = metrics.reduce((sum, m) => sum + m.comptes_actifs, 0);
   const mrr = metrics.reduce((sum, m) => sum + m.mrr, 0);
   const pendingAmount = pendingPayments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
@@ -373,7 +368,7 @@ export default function SuperAdminHubPage() {
   const insights = useMemo(() => {
     const items: Array<{ tone: "critical" | "warning" | "info" | "success"; title: string; text: string; href?: string }> = [];
     if (criticalProjects.length) items.push({ tone: "critical", title: "Action prioritaire", text: `${criticalProjects.length} projet(s) signalent un état critique.`, href: "/admin/integration-checklist" });
-    if (staleProjects.length) items.push({ tone: "warning", title: "Synchronisation à vérifier", text: `${staleProjects.length} projet(s) n'ont pas synchronisé leurs métriques depuis plus de 30 minutes.` });
+    if (staleProjects.length) items.push({ tone: "warning", title: "Synchronisation à vérifier", text: `${staleProjects.length} projet(s) n'ont pas synchronisé leurs métriques dans le délai attendu (deux fois leur cadence d'envoi).` });
     if (pendingPayments.length) items.push({ tone: "warning", title: "Validation financière", text: `${pendingPayments.length} paiement(s) attendent une décision pour ${formatFCFA(pendingAmount)}.`, href: "/admin/finance" });
     if (!criticalProjects.length && !warningProjects.length && !staleProjects.length && !pendingPayments.length) {
       items.push({ tone: "success", title: "Centre opérationnel", text: "Aucune anomalie prioritaire détectée dans les données reçues." });

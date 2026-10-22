@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { formatFCFA } from "@/lib/utils";
+import { isStale } from "@/lib/freshness";
 import { REFONTIQ_PROJECTS, type RefontiqProject } from "@/lib/projects";
 import { ADMIN_LOGIN_ROUTE } from "@/lib/routes";
 import { AdminPeriodFilter, getPresetRange, type PeriodRange } from "@/components/admin-period-filter";
@@ -169,7 +170,7 @@ export default function ProjectCockpitPage() {
   }, [load]);
 
   const health = healthMeta(metric?.statut_sante ?? "unknown");
-  const stale = !metric?.derniere_synchro || (Date.now() - new Date(metric.derniere_synchro).getTime()) > 30 * 60 * 1000;
+  const stale = isStale(metric?.derniere_synchro, project?.id);
   const pendingAmount = useMemo(() => payments.reduce((sum, item) => sum + Number(item.amount || 0), 0), [payments]);
 
   if (!project) {
