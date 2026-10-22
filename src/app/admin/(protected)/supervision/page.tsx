@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, Activity, CheckCircle2, Clock3, RefreshCw, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { REFONTIQ_PROJECTS } from "@/lib/projects";
 import { formatFCFA } from "@/lib/utils";
+import { mrrDelta } from "@/lib/revenue-model";
 
 type Health = "healthy" | "warning" | "critical" | "unknown";
 type Metric = {
@@ -85,7 +86,7 @@ export default function IntelligencePage() {
       metric,
       previous,
       accountsDelta: metric && previous ? metric.comptes_actifs - previous.comptes_actifs : null,
-      mrrDelta: metric && previous ? metric.mrr - previous.mrr : null,
+      mrrDelta: mrrDelta(metric, previous),
     };
   }), [metrics, snapshots]);
 
