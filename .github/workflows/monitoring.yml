@@ -1,0 +1,52 @@
+# Surveillance des produits : toutes les 30 minutes, le Control Center vérifie que chaque
+# produit surveillé a envoyé ses métriques dans le délai attendu, et prévient sinon.
+#
+# Pourquoi GitHub Actions et pas un cron Vercel : le plan Hobby de Vercel refuse les crons
+# plus fréquents qu'une fois par jour (c'est ce qui a bloqué les déploiements de Séjoura du
+# 24/09 au 18/10), et les erreurs d'un cron Vercel ne sont pas lisibles ici.
+#
+# Bonus : si le Control Center lui-même est en panne, CE JOB ÉCHOUE et GitHub envoie un
+# e-mail d'échec de workflow : l'alerte ne dépend donc pas du système surveillé.
+#
+# Prérequis (voir docs/operations/monitoring.md) :
+#   - secret GitHub  MONITORING_SECRET  (Settings > Secrets and variables > Actions)
+#   - variable Vercel MONITORING_SECRET sur le projet Control Center, MÊME valeur
+name: Surveillance des produits
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitoring
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Contrôle de fraîcheur
+        env:
+          MONITORING_SECRET: ${{ secrets.MONITORING_SECRET }}
+          CC_URL: https://control.refontiq.com
+        run: |
+          if [ -z "$MONITORING_SECRET" ]; then
+            echo "::error title=Surveillance::le secret GitHub MONITORING_SECRET est absent (voir docs/operations/monitoring.md)"
+            exit 1
+          fi
+          code=$(curl -sS -m 30 -o response.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $MONITORING_SECRET" "$CC_URL/api/monitoring/check") || {
+            echo "::error title=Surveillance::Control Center injoignable ($CC_URL)"
+            exit 1
+          }
+          if [ "$code" != "200" ]; then
+            echo "::error title=Surveillance::HTTP $code - $(head -c 300 response.json)"
+            exit 1
+          fi
+          jq -r '.findings[] | "::warning title=\(.projet) (\(.severity))::\(.message)"' response.json
+          jq -r '"Surveillance OK : \(.findings | length) constat(s), \(.notified) alerte(s) envoyée(s), \(.skipped_duplicates) déjà notifiée(s)"' response.json
